@@ -59,9 +59,11 @@ elmo-hikes/
 
 
 ## Contributors
+- **Your Name** -Ahmad Khalil
 - **Brian Lau** - BCIT CST Student with a passion for outdoor adventures and user-friendly applications. Fun fact:Doesn't Love solving Rubik's Cubes in under a minute.
 - **Teammate Name** - BCIT CST Student, Frontend enthusiast with a knack for creative design. Fun fact: Has a collection of over 50 houseplants.git
 - Sebastian Roby - BCIT CST Student, fella who likes games and sometimes reading. Fun fact: planning on DMing a Lancer campaign
+
 
 ---
 
