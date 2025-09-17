@@ -59,8 +59,12 @@ elmo-hikes/
 
 
 ## Contributors
+
 - **Your Name** -Ahmad Khalil
-- **Teammate Name** - Brain , Sebastian 
+- **Brian Lau** -BCIT CST Student with a passion for outdoor adventures and user-friendly applications.Fun fact:Doesn't solving Rubik's Cubes in under a minute.  
+
+- Sebastian Roby - BCIT CST Student, fella who likes games and sometimes reading. Fun fact: planning on DMing a Lancer campaign
+
 
 ---
 
