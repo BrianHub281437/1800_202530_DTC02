@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My BCIT Project</title>
+    <meta name="comp1800 template" content="My 1800 App">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Other libraries go here -->
+
+    <!-- Link to styles of your own -->
+
+    <link rel="stylesheet" href="./styles/style.css">
+
+</head>
+
+<body>
+
+    <!------------------------------>
+    <!-- Your HTML Layout go here -->
+    <!------------------------------>
+    <!-- Stuff for body goes here -->
+    <nav class="navbar sticky-top navbar-expand-lg bg-danger">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Fridge.Nav</a>
+            <a class="nav-link" href="#">Fridge</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Posts</a>
+                    </li>
+                    <!--
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    TEMP DROPDOWN IF NEEDED
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </li>
+            -->
+                    <!--
+            <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+            </li>
+            -->
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid mt-3 d-flex justify-content-between px-4">
+    <button class="btn btn-outline-secondary btn-lg">← Back</button>
+    <button class="btn btn-primary btn-lg">Next →</button>
+  </div>
+    <div class="container my-4">
+  <div class="row row-cols-1 row-cols-md-2 g-4 align-items-start">
+    <!-- LEFT: Card -->
+    <div class="col">
+      <div class="card h-100">
+        <img src="https://media.witanddelight.com/content/uploads/2022/03/21143510/fridge-organization-2-1600x1200.jpg"
+             class="card-img-top" alt="upload fridge picture">
+        <div class="card-body">
+          <h5 class="card-title">Example fridge^^</h5>
+          <p class="card-text">
+            Upload a picture of your fridge and freezer and we'll add whatever ingredients we think you have. We will also have a take a picture option on the mobile version.
+          </p>
+          <div class="input-group mb-3">
+            <input type="file" class="form-control" id="inputGroupFile02">
+            <button class="btn btn-primary" type="button">Upload</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT on md+, BELOW on sm: Dropdown Section -->
+    <div class="col">
+      <div class="mb-2">
+        <h5 class="fw-semibold">Add whatever ingredient we missed!</h5> <!-- Text on top -->
+      </div>
+
+      <div class="input-group mb-3">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+          Ingredient type
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Fresh ingredient</a></li>
+          <li><a class="dropdown-item" href="#">Frozen ingredient</a></li>
+          <li><a class="dropdown-item" href="#">condiment</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Other</a></li>
+        </ul>
+        <input type="text" class="form-control" placeholder="Enter an ingredient with quantities here..." aria-label="Text input with dropdown button">
+        <!-- Plus button -->
+        <button class="btn btn-success" type="button">+</button>
+      </div>
+      <h4 class="card-text">
+            Ingredient list will go below...
+      </h4>
+      <p>
+        <ul>
+            <li>Frozen Ingredients</li>
+            <ul><li>...</li></ul>
+            <li>Fresh Ingredients</li>
+            <ul><li>...</li></ul>
+            <li>Condiments</li>
+            <ul><li>...</li></ul>
+            <li>Others</li>
+            <ul><li>...</li></ul>
+        </ul>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!----Footer-->
+ <footer class="site-footer">
+     <div class="footer-container">
+
+         <div class="footer-links">
+
+             <a href="#">Back</a>
+             <a href="#">Search</a>
+             <a href="#">Bookmarks</a>
+
+         </div>
+
+
+
+
+
+             <!--
+        <p>&copy; 2025 Fridge.Nav | All Rights Reserved</p>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Contact</a>
+        </div>
+        -->
+         </div>
+</footer>
+
+
+
+    
+    <!---------------------------------------------->
+                    <!-- Your own JavaScript functions go here    -->
+                    <!---------------------------------------------->
+                    <!-- Link to scripts of your own -->
+                    <script type="module" src="./src/main.js"></script>
+
+</body>
+
+</html>
