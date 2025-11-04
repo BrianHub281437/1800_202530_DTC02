@@ -4,6 +4,7 @@ body {
 }
 */
 /* Footer Styles */
+
 .site-footer {
   background-color: #c62828;
   color: white;
@@ -15,6 +16,7 @@ body {
   left: 0;
   width: 100%;
 }
+
 
 .footer-container {
   max-width: 900px;
@@ -36,3 +38,9 @@ body {
 .footer-links a:hover {
   color: #ffd54f; /* warm yellow hover */
 }
+
+.box {
+    width: 90%;
+    height: 30vh;
+}
+
