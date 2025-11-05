@@ -17,8 +17,8 @@ class SiteNavbar extends HTMLElement {
             <!-- Navbar: single source of truth -->
             <nav class="navbar sticky-top navbar-expand-lg bg-danger">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Fridge.Nav</a>
-                    <a class="nav-link" href="#">Fridge</a>
+                    <a class="navbar-brand" href="main.html">Fridge.Nav</a>
+                    <a class="nav-link" href="fridge.html">Fridge</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -28,22 +28,19 @@ class SiteNavbar extends HTMLElement {
                                 <a class="nav-link active" aria-current="page" href="#">Settings</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Profile</a>
+                                <a class="nav-link" href="profile.html">Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Posts</a>
+                                <a class="nav-link" href="about.html">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">About</a>
+                                <a class="nav-link" href="privacypolicy.html">Privacy Policy</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Privacy Policy</a>
+                                <a class="nav-link" href="contact.html">Contact</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Contact</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Logout</a>
+                                <a class="nav-link" href="login.html">Logout</a>
                             </li>
                             <!--
     <li class="nav-item dropdown">

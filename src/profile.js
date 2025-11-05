@@ -72,10 +72,10 @@ async function saveUserInfo() {
 //   uid (string)  – user’s UID
 //   name, school, city (strings)
 //-------------------------------------------------------------
-async function updateUserDocument(uid, name, school, city) {
+async function updateUserDocument(uid,profileName, school, city) {
   try {
     const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, { name, school, city });
+    await updateDoc(userRef, { profileName, school, city });
     console.log("User document successfully updated!");
   } catch (error) {
     console.error("Error updating user document:", error);
