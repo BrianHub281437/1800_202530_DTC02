@@ -28,21 +28,25 @@
     <!------------------------------>
     <!-- Stuff for body goes here -->
     <site-navbar></site-navbar>
-         
+
 
     <div class="p-5 mb-4 bg-light rounded-3">
         <div class="container-fluid py-5">
             <!--
-    <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-        <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
-    -->
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            -->
             <h2 class="overflow scroll display-5 fw-bold">Hello <span id="name-goes-here">friend </span></h2>
             <h1 class="overflow scroll display-5 fw-bold">Recent</h1>
 
             <div class="border border-primary box overflow-auto">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <div id="recipes-go-here" class="col">
+                </div>
+
+                <!--<ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Item 1</a>
                     </li>
@@ -73,10 +77,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Item 10</a>
                     </li>
-                </ul>
+                </ul>-->
             </div>
             <h1 class="overflow scroll display-5 fw-bold">Reccomended</h1>
             <div class="border border-primary box overflow-auto">
+
+                <div id="recipes-go-here" class="row">
+                </div>
+
+
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Item 1</a>
@@ -118,7 +127,18 @@
         </div>
     </div>
 
-
+    <template id="recipeCardTemplate">
+        <div class="col">
+            <div class="card">
+                <img class="card-img-top card-image" src="..." alt="Recipe Image">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <p class="card-text"></p>
+                    <p class="card-author"></p>
+                </div>
+            </div>
+        </div>
+    </template>
     <!----Footer-->
     <!--<site-footer></site-footer>-->
 
@@ -132,6 +152,7 @@
     <!-- Your own JavaScript functions go here    -->
     <!---------------------------------------------->
     <!-- Link to scripts of your own -->
+    <script type="module" src="./src/app.js"></script>
     <script type="module" src="./src/main.js"></script>
 
 </body>
