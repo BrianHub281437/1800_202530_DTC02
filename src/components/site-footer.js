@@ -12,6 +12,14 @@ class SiteFooter extends HTMLElement {
                         <a href="#">Bookmarks</a>
 
                     </div>
+                    <!--
+        <p>&copy; 2025 Fridge.Nav | All Rights Reserved</p>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Contact</a>
+        </div>
+        -->
                 </div>
             </footer>
         `;
