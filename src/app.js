@@ -1,18 +1,16 @@
 ﻿import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
-//--------------------------------------------------------------
-// If you have custom global styles, import them as well:
-//--------------------------------------------------------------
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
 
+import { firebaseConfig } from '/src/firebaseConfig.js';
 
-//--------------------------------------------------------------
-// Custom global JS code (shared with all pages)can go here.
-//--------------------------------------------------------------
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-// This is an example function. Replace it with your own logic.
-function sayHello() {
-  // TODO: implement your logic here
-}
-document.addEventListener('DOMContentLoaded', sayHello);
-
+export { app, auth, db, storage };
