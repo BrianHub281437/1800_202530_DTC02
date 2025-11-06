@@ -2,16 +2,28 @@
 <html lang="en">
 
 <head>
-    <title>My BCIT Project</title>
-    <meta name="comp1800 template" content="My 1800 App">
+  <title>My BCIT Project</title>
 
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Required meta tags -->
+  <meta name="comp1800 template" content="My 1800 App">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- Other libraries go here -->
 
-    <!-- Web Components for shared navbar and footer layout -->
-    <script type="module" src="/src/components/site-navbar.js"></script>
-    <script type="module" src="/src/components/site-footer.js"></script>
+    <!-- Link to styles of your own -->
+     <link rel="stylesheet" href="./styles/style.css">
+
+    <!-- Web Components -->
+  <script type="module" src="/src/components/site-navbar.js"></script>
+  <script type="module" src="/src/components/site-footer.js"></script>
+
+  <!-- for profile picture -->
+  <style>
+    .container { max-width: 720px; margin: 2rem auto; padding: 0 1rem; text-align:center; }
+    .form-group { margin-bottom: 1rem; text-align:left; }
+    #photoPreview { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc; margin-bottom: 1rem; }
+    .muted { font-size: .9rem; color: #6c757d; }
+  </style>
 </head>
 
 <body>
@@ -20,43 +32,59 @@
     <!------------------------------>
 
     <!-- our own navbar goes here -->
-    <site-navbar></site-navbar>
+  <site-navbar></site-navbar>
 
-    <!-- Main content goes here -->
-<div class="container">
-        <h1>User Profile </h1>
-        <form>
-            <fieldset class="mb-3" id="personalInfoFields" disabled>
-                <div class="form-group">
-                    <label >Profile Name</label>
-                    <input type="text" id="nameInput" class="form-control" placeholder="Enter your name">
-                </div>
-                <div class="form-group">
-                    <label >School</label>
-                    <input type="text" id="schoolInput" class="form-control" placeholder="Enter your school">
-                </div>
-                <div class="form-group">
-                    <label >City</label>
-                    <input type="text" id="cityInput" class="form-control" placeholder="Enter your city">
-                </div>
-            </fieldset>
-            <div class="d-flex justify-content-end mt-5">
-                <button id="editButton" type="button" class="btn btn-secondary">Edit</button>
-                <span style="width: 10px"></span>
-                <button id="saveButton" type="button" class="btn btn-info">Save</button>
-            </div>
-        </form>
-</div>
-    <!-- our own footer goes here -->
-    <site-footer></site-footer>
+  <!-- Main content goes here -->
+  <div class="container">
+    <h1 class="mb-3">User Profile</h1>
+    <div class="form-group">
+      <label for="photoInput">Profile Picture <span class="muted">(upload an image)</span></label>
+      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <img id="photoPreview" src="" aria-hidden="true">
+        <input type="file" id="photoInput" accept="image/*" class="form-control" style="max-width:300px; margin-top:0.5rem;">
+        <button type="button" id="removePhotoBtn" class="btn btn-sm btn-outline-secondary mt-2">Remove photo</button>
+      </div>
+    </div>
 
-    <!---------------------------------------------->
-    <!-- Your own JavaScript scripts go here      -->
-    <!---------------------------------------------->
+    <form id="profileForm" novalidate>
+      <fieldset class="mb-3" id="personalInfoFields">
+        <div class="form-group">
+          <label for="nameInput">Profile Name</label>
+          <input type="text" id="nameInput" class="form-control" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label for="schoolInput">School</label>
+          <input type="text" id="schoolInput" class="form-control" placeholder="Enter your school">
+        </div>
+        <div class="form-group">
+          <label for="cityInput">City</label>
+          <input type="text" id="cityInput" class="form-control" placeholder="Enter your city">
+        </div>
+        <div class="form-group">
+          <label for="phoneInput">Phone Number <span class="muted">(optional)</span></label>
+          <input type="tel" id="phoneInput" class="form-control" placeholder="e.g., 604-555-1234">
+        </div>
+        <div class="form-group">
+          <label for="bioInput">Bio <span class="muted">(optional)</span></label>
+          <textarea id="bioInput" class="form-control" rows="3" placeholder="Write a short bio about yourself"></textarea>
+        </div>
+      </fieldset>
 
-    <script type="module" src="/src/app.js"></script>
-        <script type="module" src="/src/profile.js"></script>
+      <div style="display:flex; justify-content:center; gap:0.75rem; margin-top:1rem;">
+        <button id="editButton" type="button" class="btn btn-secondary">Edit</button>
+        <button id="saveButton" type="button" class="btn btn-info">Save</button>
+      </div>
+    </form>
+  </div>
 
+<!-- our own footer goes here -->
+  <site-footer></site-footer>
+
+<!---------------------------------------------->
+<!-- Your own JavaScript scripts go here      -->
+<!---------------------------------------------->
+  <script type="module" src="/src/app.js"></script>
+  <script type="module" src="/src/profile.js"></script>
 </body>
 
 </html>
