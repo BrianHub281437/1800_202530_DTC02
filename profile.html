@@ -85,6 +85,76 @@
 <!---------------------------------------------->
   <script type="module" src="/src/app.js"></script>
   <script type="module" src="/src/profile.js"></script>
+  <!-- we dont need this anymore becuase firebase free plan doesnt have storage-->
+  <!-- <script type="module" src="/src/profilePictureFirebase.js"></script> -->
+   <!-- <script type="module" src="/src/profilePictureLocal.js"></script> -->
+   
+
+   <!---- instead we are going to do it locally -->
+   <script type="module" src="/src/app.js"></script>
+<script type="module" src="/src/profile.js"></script>
+
+<script>
+  // Simple local-only profile picture logic, no Firebase, no modules.
+  console.log("inline profile picture script loaded");
+
+  const fileInput = document.getElementById("photoInput");
+  const previewImg = document.getElementById("photoPreview");
+  const removeBtn = document.getElementById("removePhotoBtn");
+
+  console.log("inline script elements:", { fileInput, previewImg, removeBtn });
+
+  if (fileInput && previewImg && removeBtn) {
+    const STORAGE_KEY = "localProfilePhoto";
+
+    // Load saved photo on page load
+    const savedPhoto = localStorage.getItem(STORAGE_KEY);
+    if (savedPhoto) {
+      console.log("inline: loaded saved photo");
+      previewImg.src = savedPhoto;
+      previewImg.removeAttribute("aria-hidden");
+      removeBtn.disabled = false;
+    } else {
+      previewImg.setAttribute("aria-hidden", "true");
+      removeBtn.disabled = true;
+    }
+
+    // When user chooses a new picture
+    fileInput.addEventListener("change", () => {
+      console.log("inline: file input changed");
+      const file = fileInput.files[0];
+      console.log("inline: selected file", file);
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result;
+        console.log("inline: saving photo to localStorage");
+        previewImg.src = base64;
+        previewImg.removeAttribute("aria-hidden");
+        removeBtn.disabled = false;
+        localStorage.setItem(STORAGE_KEY, base64);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Remove picture
+    removeBtn.addEventListener("click", () => {
+      console.log("inline: remove clicked");
+      previewImg.src = "";
+      previewImg.setAttribute("aria-hidden", "true");
+      fileInput.value = "";
+      removeBtn.disabled = true;
+      localStorage.removeItem(STORAGE_KEY);
+    });
+  } else {
+    console.warn("inline profile script: elements not found");
+  }
+</script>
 </body>
+</html>
+
+
+  </body>
 
 </html>
