@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My BCIT Project</title>
+    <meta name="comp1800 template" content="My 1800 App">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Other libraries go here -->
+
+    <!-- Link to styles of your own -->
+    <link rel="stylesheet" href="./styles/style.css">
+
+    <!-- Web Components -->
+    <script type="module" src="/src/components/site-navbar.js"></script>
+    <script type="module" src="/src/components/site-footer.js"></script>
+
+</head>
+
+<body>
+    <!------------------------------>
+    <!-- Your HTML Layout go here -->
+    <!------------------------------>
+    <!-- our own navbar goes here -->
+    <site-navbar></site-navbar>
+
+    <!-- Main content goes here -->
+    <main class="container py-4">
+        <h1 id="recipeName">Loading...</h1>
+        <p id="recipeTags"></p>
+        <img id="recipeImage" class="img-fluid rounded mt-3" src="" alt="Recipe image">
+        <div id="recipeIngredients"></div>
+        <p id="recipeInstructions"></p>
+        <div class="text-center mt-3">
+            <button id="bookmarkBtn" class="btn btn-primary">
+                Bookmark
+            </button>
+        </div>
+    </main>
+    <!-- our own footer goes here -->
+    <site-footer></site-footer>
+
+    <!---------------------------------------------->
+    <!-- Your own JavaScript scripts go here      -->
+    <!---------------------------------------------->
+
+    <script type="module" src="/src/app.js"></script>
+    <script type="module" src="/src/recipeDetails.js"></script>
+
+</body>
+
+</html>
