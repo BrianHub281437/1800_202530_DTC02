@@ -2,132 +2,123 @@
 <html lang="en">
 
 <head>
-    <title>My BCIT Project</title>
+    <title>Fridge.Nav – Ingredients</title>
     <meta name="comp1800 template" content="My 1800 App">
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Other libraries go here -->
-      <script type="module" src="/src/components/site-navbar.js"></script>
+    <!-- Web components -->
+    <script type="module" src="/src/components/site-navbar.js"></script>
     <script type="module" src="/src/components/site-footer.js"></script>
 
-
-    <!-- Link to styles of your own -->
-
+    <!-- Your styles -->
     <link rel="stylesheet" href="./styles/style.css">
-
 </head>
 
 <body>
-
     <!------------------------------>
     <!-- Your HTML Layout go here -->
     <!------------------------------>
-    <!-- Stuff for body goes here -->
-     <site-navbar></site-navbar>
-     <!-- main content -->
+    <!-- our own navbar goes here -->
+    <site-navbar></site-navbar>
+
     <div class="container-fluid mt-3 d-flex justify-content-between px-4">
-    <button class="btn btn-outline-secondary btn-lg">← Back</button>
-    <button class="btn btn-primary btn-lg">Next →</button>
-  </div>
+        <button class="btn btn-outline-secondary btn-lg" id="back-btn">← Back</button>
+        <button class="btn btn-primary btn-lg" id="next-btn">Next →</button>
+    </div>
+
+    <!-- Main content -->
     <div class="container my-4">
-  <div class="row row-cols-1 row-cols-md-2 g-4 align-items-start">
-    <!-- LEFT: Card -->
-    <div class="col">
-      <div class="card h-100">
-        <img src="https://media.witanddelight.com/content/uploads/2022/03/21143510/fridge-organization-2-1600x1200.jpg"
-             class="card-img-top" alt="upload fridge picture">
-        <div class="card-body">
-          <h5 class="card-title">Example fridge^^</h5>
-          <p class="card-text">
-            Upload a picture of your fridge and freezer and we'll add whatever ingredients we think you have. We will also have a take a picture option on the mobile version.
-          </p>
-          <div class="input-group mb-3">
-            <input type="file" class="form-control" id="inputGroupFile02">
-            <button class="btn btn-primary" type="button">Upload</button>
-          </div>
+
+        <h3 class="fw-bold mb-3">Ingredients</h3>
+
+        <div class="row g-3 align-items-end mb-4">
+
+            <div class="col-md-4">
+                <label class="form-label">Ingredient</label>
+
+                <div class="dropdown w-100">
+                    <button
+                        class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
+                        type="button"
+                        id="ingredientDropdownButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Select ingredient
+                    </button>
+
+                    <ul
+                        class="dropdown-menu p-2"
+                        aria-labelledby="ingredientDropdownButton"
+                        style="max-height: 260px; overflow-y: auto;"
+                        id="ingredients-dropdown-menu"
+                    >
+                        <li class="mb-2">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="ingredient-filter"
+                                placeholder="Type to filter ingredients..."
+                            >
+                        </li>
+
+                        <li><hr class="dropdown-divider"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Quantity input -->
+            <div class="col-md-3">
+                <label for="quantity-input" class="form-label">Quantity</label>
+                <input
+                    id="quantity-input"
+                    class="form-control"
+                    type="text"
+                    placeholder="e.g. 2, 1/2, 3.5"
+                >
+            </div>
+
+            <!-- Measurement dropdown -->
+            <div class="col-md-3">
+                <label for="measurement-select" class="form-label">Measurement</label>
+                <select id="measurement-select" class="form-select">
+                    <option value="">Select measurement</option>
+                </select>
+            </div>
+
+            <!-- Add button -->
+            <div class="col-md-2">
+                <button id="add-ingredient-btn" class="btn btn-success w-100">
+                    Add
+                </button>
+            </div>
+
         </div>
-      </div>
+
+        <!-- Selected ingredients list -->
+        <ul id="ingredients-list" class="list-group">
+            <!-- fridge.js will create <li> items here -->
+        </ul>
+
     </div>
 
-    <!-- RIGHT on md+, BELOW on sm: Dropdown Section -->
-    <div class="col">
-      <div class="mb-2">
-        <h5 class="fw-semibold">Add whatever ingredient we missed!</h5> <!-- Text on top -->
-      </div>
-
-      <div class="input-group mb-3">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-          Ingredient type
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Fresh ingredient</a></li>
-          <li><a class="dropdown-item" href="#">Frozen ingredient</a></li>
-          <li><a class="dropdown-item" href="#">condiment</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="#">Other</a></li>
-        </ul>
-        <input type="text" class="form-control" placeholder="Enter an ingredient with quantities here..." aria-label="Text input with dropdown button">
-        <!-- Plus button -->
-        <button class="btn btn-success" type="button">+</button>
-      </div>
-      <h4 class="card-text">
-            Ingredient list will go below...
-      </h4>
-      <p>
-        <ul>
-            <li>Frozen Ingredients</li>
-            <ul><li>...</li></ul>
-            <li>Fresh Ingredients</li>
-            <ul><li>...</li></ul>
-            <li>Condiments</li>
-            <ul><li>...</li></ul>
-            <li>Others</li>
-            <ul><li>...</li></ul>
-        </ul>
-      </p>
-    </div>
-  </div>
-</div>
-
-<!----Footer-->
- <footer class="site-footer">
-     <div class="footer-container">
-
-         <div class="footer-links">
-
-             <a href="#">Back</a>
-             <a href="#">Search</a>
-             <a href="#">Bookmarks</a>
-
-         </div>
-
-
-
-
-
-             <!--
-        <p>&copy; 2025 Fridge.Nav | All Rights Reserved</p>
-        <div class="footer-links">
-          <a href="#">About</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Contact</a>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="#">Back</a>
+                <a href="#">Search</a>
+                <a href="#">Bookmarks</a>
+            </div>
         </div>
-        -->
-         </div>
-</footer>
+    </footer>
 
-
-
-    
-<!---------------------------------------------->
-<!-- Your own JavaScript functions go here    -->
-<!---------------------------------------------->
-<!-- Link to scripts of your own -->
-<script type="module" src="./src/app.js"></script>
+    <!---------------------------------------------->
+    <!-- Your own JavaScript scripts go here      -->
+    <!---------------------------------------------->
+    <script type="module" src="./src/fridge.js"></script>
 
 </body>
 

@@ -8,8 +8,8 @@ class SiteFooter extends HTMLElement {
                     <div class="footer-links">
 
                         <a href="#">Back</a>
-                        <a href="#">Search</a>
-                        <a href="#">Bookmarks</a>
+                        <a href="search.html">Search</a>
+                        <a href="bookmarks.html">Bookmarks</a>
 
                     </div>
                     <!--
