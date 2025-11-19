@@ -18,7 +18,7 @@ class SiteNavbar extends HTMLElement {
             <nav class="navbar sticky-top navbar-expand-lg bg-danger">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="main.html">Fridge.Nav</a>
-                    <a class="nav-link" href="fridge.html">Fridge</a>
+                    <a class="nav-link" href="fridgeTerminal.html">Fridge</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>

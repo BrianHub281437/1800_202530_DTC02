@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My BCIT Project</title>
+    <meta name="comp1800 template" content="My 1800 App">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Other libraries go here -->
+    <!-- Link to styles of your own -->
+    <link rel="stylesheet" href="./styles/style.css">
+
+    <!-- Web Components -->
+    <script type="module" src="/src/components/site-navbar.js"></script>
+    <script type="module" src="/src/components/site-footer.js"></script>
+
+</head>
+
+<body>
+    <!------------------------------>
+    <!-- Your HTML Layout go here -->
+    <!------------------------------>
+    <!-- our own navbar goes here -->
+    <site-navbar></site-navbar>
+
+    <!-- Main content goes here -->
+     <div class="container">
+        <br>
+        <h1>Create New Fridge</h1>
+        <br>
+        <form>
+
+            <div class="form-group">
+                <label for="exampleFormControlInput1">* Add a title</label>
+                <input type="text" class="form-control" id="title" placeholder="Title">
+            </div><br>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">* Add a description</label>
+                <input type="text" class="form-control" id="description" placeholder="Description">
+            </div><br>
+
+            <br>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-lg btn-primary pull-right" id="submitBtn">
+                    Submit
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- our own footer goes here -->
+    <site-footer></site-footer>
+
+    <!---------------------------------------------->
+    <!-- Your own JavaScript scripts go here      -->
+    <!---------------------------------------------->
+
+    <script type="module" src="/src/app.js"></script>
+
+</body>
+
+</html>
