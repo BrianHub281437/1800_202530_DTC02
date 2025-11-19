@@ -12,9 +12,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-//Storage import added for future use (for image uploads )
-import { getStorage } from "firebase/storage";
-
 
 // ---------------------------------------------------------
 // Read Firebase configuration from Vite environment variables.
@@ -57,5 +54,3 @@ export const db = getFirestore(app);
 
 // (Optional) export default app;
 // ---------------------------------------------------------
-export const db = getFirestore(app);
-export const storage = getStorage(app); // the new export storage for image uploads
