@@ -10,7 +10,7 @@ class SiteNavbar extends HTMLElement {
     constructor() {
         super();
         this.renderNavbar();
-        this.renderAuthControls();
+        //this.renderAuthControls();
     }
 
     renderNavbar() {
@@ -18,12 +18,18 @@ class SiteNavbar extends HTMLElement {
             <!-- Navbar: single source of truth -->
             <nav class="navbar navbar-expand-lg navbar-light bg-info">
                 <div class="container-fluid">
+<<<<<<< HEAD
                     <a class="navbar-brand" href="/">
                         <img src="https://www.creativefabrica.com/wp-content/uploads/2020/02/12/Food-Logo-Graphics-1-98.jpg" height="36">
                         Fridge.Nav
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+=======
+                    <a class="navbar-brand" href="main.html">Fridge.Nav</a>
+                    <a class="nav-link" href="fridge.html">Fridge</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+>>>>>>> f376e9db442b402f2eec4798e20935cb18cbad89
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -31,6 +37,43 @@ class SiteNavbar extends HTMLElement {
                             <li class="nav-item">
                                 <a class="nav-link" href="/">Home</a>
                             </li>
+<<<<<<< HEAD
+=======
+                            <li class="nav-item">
+                                <a class="nav-link" href="profile.html">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="about.html">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="privacypolicy.html">Privacy Policy</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="contact.html">Contact</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="login.html">Logout</a>
+                            </li>
+                            <!--
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            TEMP DROPDOWN IF NEEDED
+        </a>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+    </li>
+    -->
+                    <!--
+    <li class="nav-item">
+        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+    </li>
+    -->
+
+>>>>>>> f376e9db442b402f2eec4798e20935cb18cbad89
                         </ul>
                         <div class="d-flex align-items-center gap-2 ms-lg-2" id="rightControls">
                             <form class="d-flex align-items-center gap-2 my-2 my-lg-0" id="navSearch" role="search">
@@ -47,6 +90,12 @@ class SiteNavbar extends HTMLElement {
             </nav>
         `;
     }
+<<<<<<< HEAD
+=======
+    /*
+    renderAuthControls() {
+        const authControls = this.querySelector('#authControls');
+>>>>>>> f376e9db442b402f2eec4798e20935cb18cbad89
 
      // -------------------------------------------------------------
  // Renders the authentication controls (login/logout) based on user state
@@ -92,8 +141,12 @@ renderAuthControls() {
       updatedAuthControl = `<a class="btn btn-outline-light" id="loginBtn" href="/login.html" style="min-width: 80px;">Log in</a>`;
       authControls.innerHTML = updatedAuthControl;
     }
+<<<<<<< HEAD
   });
 }
+=======
+    */
+>>>>>>> f376e9db442b402f2eec4798e20935cb18cbad89
 }
 
 customElements.define('site-navbar', SiteNavbar);

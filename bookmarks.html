@@ -9,13 +9,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-   <!-- Web Components for shared navbar and footer layout -->
-    <script type="module" src="/src/components/site-navbar.js"></script>
-    <script type="module" src="/src/components/site-footer.js"></script>
+    <!-- Other libraries go here -->
 
     <!-- Link to styles of your own -->
-    <link rel="stylesheet" href="./styles/style.css">
 
+    <link rel="stylesheet" href="./styles/style.css">
+    
     <!-- Web Components -->
     <script type="module" src="/src/components/site-navbar.js"></script>
     <script type="module" src="/src/components/site-footer.js"></script>
@@ -23,14 +22,15 @@
 </head>
 
 <body>
+
     <!------------------------------>
     <!-- Your HTML Layout go here -->
     <!------------------------------>
-<<<<<<< HEAD
-     <!-- our own navbar goes here -->
-    <site-navbar></site-navbar>
     <!-- Stuff for body goes here -->
-     
+    <site-navbar></site-navbar>
+
+
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
   <div class="col">
     <div class="card h-100">
@@ -75,21 +75,14 @@
 <button class="btn btn-success btn-lg position-fixed bottom-0 start-0 m-4 shadow">
     + Add Post
   </button>
-=======
-    <!-- our own navbar goes here -->
-    <site-navbar></site-navbar>
 
-    <!-- Main content goes here -->
-
-    <!-- our own footer goes here -->
+    <!----Footer-->
     <site-footer></site-footer>
->>>>>>> f376e9db442b402f2eec4798e20935cb18cbad89
-
     <!---------------------------------------------->
-    <!-- Your own JavaScript scripts go here      -->
-    <!---------------------------------------------->
-
-    <script type="module" src="/src/app.js"></script>
+                    <!-- Your own JavaScript functions go here    -->
+                    <!---------------------------------------------->
+                    <!-- Link to scripts of your own -->
+                    <script type="module" src="./src/app.js"></script>
 
 </body>
 

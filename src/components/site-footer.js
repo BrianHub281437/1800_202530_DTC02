@@ -6,6 +6,7 @@ class SiteFooter extends HTMLElement {
 
          <div class="footer-links">
 
+<<<<<<< HEAD
              <a href="#">Back</a>
              <a href="#">Search</a>
              <a href="#">Bookmarks</a>
@@ -17,6 +18,14 @@ class SiteFooter extends HTMLElement {
 
 
              <!--
+=======
+                        <a href="#">Back</a>
+                        <a href="search.html">Search</a>
+                        <a href="bookmarks.html">Bookmarks</a>
+
+                    </div>
+                    <!--
+>>>>>>> f376e9db442b402f2eec4798e20935cb18cbad89
         <p>&copy; 2025 Fridge.Nav | All Rights Reserved</p>
         <div class="footer-links">
           <a href="#">About</a>
@@ -24,8 +33,13 @@ class SiteFooter extends HTMLElement {
           <a href="#">Contact</a>
         </div>
         -->
+<<<<<<< HEAD
          </div>
 </footer>
+=======
+                </div>
+            </footer>
+>>>>>>> f376e9db442b402f2eec4798e20935cb18cbad89
         `;
     }
 }

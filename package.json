@@ -13,6 +13,10 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
+<<<<<<< HEAD
     "firebase": "^12.4.0"
+=======
+    "firebase": "^12.5.0"
+>>>>>>> f376e9db442b402f2eec4798e20935cb18cbad89
   }
 }
