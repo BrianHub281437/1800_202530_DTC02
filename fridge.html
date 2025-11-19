@@ -2,19 +2,19 @@
 <html lang="en">
 
 <head>
-    <title>Fridge.Nav – Ingredients</title>
-    <meta name="comp1800 template" content="My 1800 App">
-
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Web components -->
-    <script type="module" src="/src/components/site-navbar.js"></script>
-    <script type="module" src="/src/components/site-footer.js"></script>
+  <title>Fridge.Nav – Home</title>
 
-    <!-- Your styles -->
-    <link rel="stylesheet" href="./styles/style.css">
+  <!-- Web Components -->
+  <script type="module" src="/src/components/site-navbar.js"></script>
+  <script type="module" src="/src/components/site-footer.js"></script>
+
+  <!-- Link to styles of your own -->
+  <link rel="stylesheet" href="./styles/style.css" />
+  <link rel="stylesheet" href="./styles/main.css">
 </head>
 
 <body>
@@ -22,104 +22,69 @@
     <!-- Your HTML Layout go here -->
     <!------------------------------>
     <!-- our own navbar goes here -->
-    <site-navbar></site-navbar>
+  <site-navbar></site-navbar>
 
-    <div class="container-fluid mt-3 d-flex justify-content-between px-4">
-        <button class="btn btn-outline-secondary btn-lg" id="back-btn">← Back</button>
-        <button class="btn btn-primary btn-lg" id="next-btn">Next →</button>
-    </div>
+   <!-- Main content goes here -->
+  <section class="hero has-slideshow">
 
-    <!-- Main content -->
-    <div class="container my-4">
+    <!-- Background image from Firestore recipe -->
+    <div class="hero-backdrop" id="hero-backdrop"></div>
 
-        <h3 class="fw-bold mb-3">Ingredients</h3>
+    <div class="wrap hero-content">
 
-        <div class="row g-3 align-items-end mb-4">
+      <!-- PERSONALIZED GREETING -->
+      <h2 class="overflow scroll display-5 fw-bold">
+        Hello <span id="name-goes-here">friend</span>
+      </h2>
 
-            <div class="col-md-4">
-                <label class="form-label">Ingredient</label>
+      <!-- Firestore Recipe Description -->
+      <p id="hero-recipe-text">
+        Loading a featured recipe...
+      </p>
 
-                <div class="dropdown w-100">
-                    <button
-                        class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        id="ingredientDropdownButton"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Select ingredient
-                    </button>
-
-                    <ul
-                        class="dropdown-menu p-2"
-                        aria-labelledby="ingredientDropdownButton"
-                        style="max-height: 260px; overflow-y: auto;"
-                        id="ingredients-dropdown-menu"
-                    >
-                        <li class="mb-2">
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="ingredient-filter"
-                                placeholder="Type to filter ingredients..."
-                            >
-                        </li>
-
-                        <li><hr class="dropdown-divider"></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Quantity input -->
-            <div class="col-md-3">
-                <label for="quantity-input" class="form-label">Quantity</label>
-                <input
-                    id="quantity-input"
-                    class="form-control"
-                    type="text"
-                    placeholder="e.g. 2, 1/2, 3.5"
-                >
-            </div>
-
-            <!-- Measurement dropdown -->
-            <div class="col-md-3">
-                <label for="measurement-select" class="form-label">Measurement</label>
-                <select id="measurement-select" class="form-select">
-                    <option value="">Select measurement</option>
-                </select>
-            </div>
-
-            <!-- Add button -->
-            <div class="col-md-2">
-                <button id="add-ingredient-btn" class="btn btn-success w-100">
-                    Add
-                </button>
-            </div>
-
-        </div>
-
-        <!-- Selected ingredients list -->
-        <ul id="ingredients-list" class="list-group">
-            <!-- fridge.js will create <li> items here -->
-        </ul>
+      <!-- Hero Controls -->
+      <div class="hero-controls" id="hero-controls" style="display: none;">
+        <button id="prevHero" aria-label="Previous recipe">‹</button>
+        <button id="nextHero" aria-label="Next recipe">›</button>
+      </div>
 
     </div>
+  </section>
 
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-links">
-                <a href="#">Back</a>
-                <a href="#">Search</a>
-                <a href="#">Bookmarks</a>
-            </div>
-        </div>
-    </footer>
+  <!-- UNDER-HERO RECIPE GRID -->
+  <section class="wrap mt-4">
+
+    <h2>Recipes</h2>
+    <p>These recipes are delicious!</p>
+
+    <!-- Recipe cards inserted here by main.js -->
+    <div id="recipes-grid" class="photo-grid"></div>
+
+  </section>
+
+  
+  <main class="wrap mt-5">
+
+    <section>
+      <h2>Your Smart Fridge Companion</h2>
+
+      <p>
+        Fridge.Nav
+      </p>
+
+      
+    </section>
+
+  </main>
+
+   <!-- our own footer goes here -->
+  <site-footer></site-footer>
 
     <!---------------------------------------------->
     <!-- Your own JavaScript scripts go here      -->
     <!---------------------------------------------->
-    <script type="module" src="./src/fridge.js"></script>
+  <script type="module" src="/src/app.js"></script>
+  <script type="module" src="/src/main.js"></script>
 
 </body>
-
 </html>
