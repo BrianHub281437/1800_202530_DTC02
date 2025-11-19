@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My BCIT Project</title>
+    <meta name="comp1800 template" content="My 1800 App">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Other libraries go here -->
+
+    <!-- Link to styles of your own -->
+    <link rel="stylesheet" href="./styles/style.css">
+
+    <!-- Web Components -->
+    <script type="module" src="/src/components/site-navbar.js"></script>
+    <script type="module" src="/src/components/site-footer.js"></script>
+
+</head>
+
+<body>
+    <!------------------------------>
+    <!-- Your HTML Layout go here -->
+    <!------------------------------>
+    <!-- our own navbar goes here -->
+    <site-navbar></site-navbar>
+    
+    <!-- Main content goes here -->
+    <main class="container py-4">
+        <div class="text-center mt-3">
+            <a href="createFridge.html">
+                <button id="newFridgeBtn" class="btn btn-primary">
+                    Create Fridge
+                </button>
+            </a>
+            <button id="joinFridgeBtn" class="btn btn-primary">
+                Join Fridge
+            </button>
+        </div>
+        <div class="border border-primary box overflow-auto">
+
+            <div id="fridges-go-here" class="col">
+            </div>
+        </div>
+    </main>
+
+    <template id="fridgeCardTemplate">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <p class="card-text"></p>
+                    <p class="card-owner"></p>
+                    <a class="btn btn-primary enter-fride" href="#">Enter Fridge</a>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!-- our own footer goes here -->
+    <site-footer></site-footer>
+
+    <!---------------------------------------------->
+    <!-- Your own JavaScript scripts go here      -->
+    <!---------------------------------------------->
+
+    <script type="module" src="/src/app.js"></script>
+    <script type="module" src="/src/fridgeTerminal.js"></script>
+
+</body>
+
+</html>
