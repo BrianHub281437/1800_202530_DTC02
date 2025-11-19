@@ -2,30 +2,52 @@
 <html lang="en">
 
 <head>
-    <title>My BCIT Project</title>
-    <meta name="comp1800 template" content="My 1800 App">
-
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Other libraries go here -->
+  <title>Fridge.Nav – Home</title>
 
-    <!-- Link to styles of your own -->
+  <!-- Web Components -->
+  <script type="module" src="/src/components/site-navbar.js"></script>
+  <script type="module" src="/src/components/site-footer.js"></script>
 
-    <link rel="stylesheet" href="./styles/style.css">
-
-    <!-- Web Components -->
-    <script type="module" src="/src/components/site-navbar.js"></script>
-    <script type="module" src="/src/components/site-footer.js"></script>
-
+  <!-- Link to styles of your own -->
+  <link rel="stylesheet" href="./styles/style.css" />
+  <link rel="stylesheet" href="./styles/main.css">
 </head>
 
 <body>
-
     <!------------------------------>
     <!-- Your HTML Layout go here -->
     <!------------------------------>
+    <!-- our own navbar goes here -->
+  <site-navbar></site-navbar>
+
+   <!-- Main content goes here -->
+  <section class="hero has-slideshow">
+
+    <!-- Background image from Firestore recipe -->
+    <div class="hero-backdrop" id="hero-backdrop"></div>
+
+    <div class="wrap hero-content">
+
+      <!-- PERSONALIZED GREETING -->
+      <h2 class="overflow scroll display-5 fw-bold">
+        Hello <span id="name-goes-here">friend</span>
+      </h2>
+
+      <!-- Firestore Recipe Description -->
+      <p id="hero-recipe-text">
+        Loading a featured recipe...
+      </p>
+
+      <!-- Hero Controls -->
+      <div class="hero-controls" id="hero-controls" style="display: none;">
+        <button id="prevHero" aria-label="Previous recipe">‹</button>
+        <button id="nextHero" aria-label="Next recipe">›</button>
+      </div>
+
     <!-- Stuff for body goes here -->
     <site-navbar></site-navbar>
 
@@ -126,7 +148,16 @@
             <!-- <button onclick="window.location.href='login.html'" class="btn btn-primary btn-lg" type="button">Login/Signup</button> -->
         </div>
     </div>
+  </section>
 
+  <!-- UNDER-HERO RECIPE GRID -->
+  <section class="wrap mt-4">
+
+    <h2>Recipes</h2>
+    <p>These recipes are delicious!</p>
+
+    <!-- Recipe cards inserted here by main.js -->
+    <div id="recipes-grid" class="photo-grid"></div>
     <template id="recipeCardTemplate">
         <div class="col">
             <div class="card">
@@ -142,19 +173,29 @@
     <!----Footer-->
     <!--<site-footer></site-footer>-->
 
-    <site-footer></site-footer>
+  </section>
 
+  
+  <main class="wrap mt-5">
+
+    <section>
+      <h2>Your Smart Fridge Companion</h2>
 
     
 
+  </main>
+
+   <!-- our own footer goes here -->
+  <site-footer></site-footer>
 
     <!---------------------------------------------->
-    <!-- Your own JavaScript functions go here    -->
+    <!-- Your own JavaScript scripts go here      -->
     <!---------------------------------------------->
+  <script type="module" src="/src/app.js"></script>
+  <script type="module" src="/src/main.js"></script>
     <!-- Link to scripts of your own -->
     <script type="module" src="./src/app.js"></script>
     <script type="module" src="./src/main.js"></script>
 
 </body>
-
 </html>
