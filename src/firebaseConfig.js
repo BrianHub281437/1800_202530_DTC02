@@ -48,5 +48,14 @@ const app = initializeApp(firebaseConfig);
 // or signout operations (that's why we export it).
 // ---------------------------------------------------------
 export const auth = getAuth(app);
+
+// ---------------------------------------------------------
+// Create and export the Firestore database instance.
+// You can import "db" anywhere to read or write data.
+// ---------------------------------------------------------
+export const db = getFirestore(app);
+
+// (Optional) export default app;
+// ---------------------------------------------------------
 export const db = getFirestore(app);
 export const storage = getStorage(app); // the new export storage for image uploads
