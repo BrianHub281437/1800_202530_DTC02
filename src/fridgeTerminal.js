@@ -6,7 +6,7 @@ import {
 
 // imports for Firestore Database essentials
 import { db, auth } from "./firebaseConfig.js";
-import { doc, onSnapshot, getDoc, query, where } from "firebase/firestore";
+import { doc, onSnapshot, getDoc, query, where, updateDoc, arrayUnion } from "firebase/firestore";
 import { collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -97,6 +97,41 @@ async function displayCardsDynamically() {
         console.error("Error getting documents: ", error);
     }
 }
+
+document.getElementById("fridge-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const fridgeID = document.getElementById("fridge-id").value.trim();
+    if (!fridgeID) return alert("Please enter a fridge ID.");
+
+    try {
+        // 1. Check if that fridge exists
+        const fridgeRef = doc(db, "fridge", fridgeID);
+        const fridgeSnap = await getDoc(fridgeRef);
+
+        if (!fridgeSnap.exists()) {
+            alert("Fridge not found. Check the ID.");
+            return;
+        }
+
+        // 2. Add the fridge ID to the user's array
+        const user = await waitForAuth();
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+            fridges: arrayUnion(fridgeID)
+        });
+
+        console.log("Fridge added to user!");
+        alert("Successfully joined fridge!");
+
+        document.getElementById("fridge-form").reset();
+        window.location.reload();
+
+    } catch (err) {
+        console.error("Error adding fridge:", err);
+        alert("Could not join fridge.");
+    }
+});
 
 // Call the function to display cards when the page loads
 displayCardsDynamically();
