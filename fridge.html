@@ -2,124 +2,72 @@
 <html lang="en">
 
 <head>
-    <title>Fridge.Nav – Ingredients</title>
-    <meta name="comp1800 template" content="My 1800 App">
+  <title>Fridge – Ingredients</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Web components -->
+  <script type="module" src="/src/components/site-navbar.js"></script>
+  <script type="module" src="/src/components/site-footer.js"></script>
 
-    <!-- Web components -->
-    <script type="module" src="/src/components/site-navbar.js"></script>
-    <script type="module" src="/src/components/site-footer.js"></script>
-
-    <!-- Your styles -->
-    <link rel="stylesheet" href="./styles/style.css">
+  <!-- Styles -->
+  <link rel="stylesheet" href="./styles/style.css" />
 </head>
 
 <body>
-    <!------------------------------>
-    <!-- Your HTML Layout go here -->
-    <!------------------------------>
-    <!-- our own navbar goes here -->
-    <site-navbar></site-navbar>
+  <!-- NAVBAR -->
+  <site-navbar></site-navbar>
 
-    <div class="container-fluid mt-3 d-flex justify-content-between px-4">
-        <button class="btn btn-outline-secondary btn-lg" id="back-btn">← Back</button>
-        <button class="btn btn-primary btn-lg" id="next-btn">Next →</button>
+  <!-- MAIN CONTENT -->
+  <main class="wrap" style="padding-top: 100px; padding-bottom: 40px;">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button class="btn btn-outline-secondary btn-lg" onclick="history.back()">← Back</button>
+      <h1>Your Fridge</h1>
+      <span></span>
     </div>
 
-    <!-- Main content -->
-    <div class="container my-4">
+    <section class="mb-3">
+      <p id="fridge-status" class="text-muted">
+        Loading ingredients from your recipes...
+      </p>
+    </section>
 
-        <h3 class="fw-bold mb-3">Ingredients</h3>
+    <section class="mb-4">
+      <h2>Add an ingredient</h2>
 
-        <div class="row g-3 align-items-end mb-4">
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="ingredient-input"
+          placeholder="Enter ingredient name..."
+        />
 
-            <div class="col-md-4">
-                <label class="form-label">Ingredient</label>
+        <button class="btn btn-success" type="button" id="add-ingredient-btn">
+          +
+        </button>
+      </div>
 
-                <div class="dropdown w-100">
-                    <button
-                        class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        id="ingredientDropdownButton"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Select ingredient
-                    </button>
+      <small class="text-muted">
+        Your fridge will auto-load ingredients from your latest recipes, but you can also add extra ones here.
+      </small>
+    </section>
 
-                    <ul
-                        class="dropdown-menu p-2"
-                        aria-labelledby="ingredientDropdownButton"
-                        style="max-height: 260px; overflow-y: auto;"
-                        id="ingredients-dropdown-menu"
-                    >
-                        <li class="mb-2">
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="ingredient-filter"
-                                placeholder="Type to filter ingredients..."
-                            >
-                        </li>
+    <section>
+      <h2>Ingredients in your fridge</h2>
+      <ul id="ingredient-list" class="list-group">
+        <!-- JS inserts ingredients here -->
+      </ul>
+    </section>
 
-                        <li><hr class="dropdown-divider"></li>
-                    </ul>
-                </div>
-            </div>
+  </main>
 
-            <!-- Quantity input -->
-            <div class="col-md-3">
-                <label for="quantity-input" class="form-label">Quantity</label>
-                <input
-                    id="quantity-input"
-                    class="form-control"
-                    type="text"
-                    placeholder="e.g. 2, 1/2, 3.5"
-                >
-            </div>
+  <!-- FOOTER -->
+  <site-footer></site-footer>
 
-            <!-- Measurement dropdown -->
-            <div class="col-md-3">
-                <label for="measurement-select" class="form-label">Measurement</label>
-                <select id="measurement-select" class="form-select">
-                    <option value="">Select measurement</option>
-                </select>
-            </div>
-
-            <!-- Add button -->
-            <div class="col-md-2">
-                <button id="add-ingredient-btn" class="btn btn-success w-100">
-                    Add
-                </button>
-            </div>
-
-        </div>
-
-        <!-- Selected ingredients list -->
-        <ul id="ingredients-list" class="list-group">
-            <!-- fridge.js will create <li> items here -->
-        </ul>
-
-    </div>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-links">
-                <a href="#">Back</a>
-                <a href="#">Search</a>
-                <a href="#">Bookmarks</a>
-            </div>
-        </div>
-    </footer>
-
-    <!---------------------------------------------->
-    <!-- Your own JavaScript scripts go here      -->
-    <!---------------------------------------------->
-    <script type="module" src="./src/fridge.js"></script>
-
+  <!-- Scripts -->
+  <script type="module" src="/src/app.js"></script>
+  <script type="module" src="/src/fridge.js"></script>
 </body>
-
 </html>

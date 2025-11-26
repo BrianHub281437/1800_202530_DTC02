@@ -16,7 +16,6 @@
     <!-- Link to styles of your own -->
     <link rel="stylesheet" href="./styles/style.css">
 
-
 </head>
 
 <body>
@@ -27,7 +26,23 @@
     <site-navbar></site-navbar>
 
     <!-- Main content goes here -->
+<div class="wrap" style="padding-top: 120px;">
+        <h1 id="recipe-title">Loading recipe...</h1>
 
+        <img id="recipe-image" style="width: 100%; max-width: 500px; border-radius: 12px; margin-top: 16px;" />
+
+        <p id="recipe-meta" style="margin: 16px 0; font-size: 1.1rem;"></p>
+
+        <h2>Ingredients</h2>
+        <ul id="ingredients-list"></ul>
+
+        <h2>Instructions</h2>
+        <p id="instructions"></p>
+
+        <div id="youtube-container" style="margin-top: 20px;"></div>
+
+        <a href="main.html" class="btn btn-secondary" style="margin-top: 30px; display: inline-block;">← Back</a>
+    </div>
     <!-- our own footer goes here -->
     <site-footer></site-footer>
 
@@ -36,6 +51,7 @@
     <!---------------------------------------------->
 
     <script type="module" src="/src/app.js"></script>
+    <script type="module" src="/src/eachrecipe.js"></script>
 
 </body>
 

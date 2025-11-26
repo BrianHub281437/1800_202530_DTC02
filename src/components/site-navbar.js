@@ -11,7 +11,7 @@ class SiteNavbar extends HTMLElement {
         this.renderNavbar();
         //this.renderAuthControls();
     }
-
+    
     renderNavbar() {
         this.innerHTML = `
             <!-- Navbar: single source of truth -->
