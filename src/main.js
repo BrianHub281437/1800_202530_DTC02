@@ -91,12 +91,14 @@ function createRecipeCard(recipe) {
 
   // Optional: link to a detail page
   const btn = document.createElement("a");
-  // If you later build a details page, swap "#" with something like:
-  // `/recipe.html?id=${recipe.idMeal || recipe.id}`
-  btn.href = "eachrecipe.html?id=" + encodeURIComponent(recipe.id || "");
-  btn.className = "btn btn-primary btn-sm";
-  btn.textContent = "View recipe";
-  body.appendChild(btn);
+
+// IMPORTANT: use the Firestore doc ID we set as recipe.id
+btn.href = `eachRecipe.html?id=${recipe.id}`;
+
+btn.className = "btn btn-primary btn-sm";
+btn.textContent = "View recipe";
+body.appendChild(btn);
+
 
   card.appendChild(body);
   return card;
