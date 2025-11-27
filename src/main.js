@@ -93,7 +93,7 @@ function createRecipeCard(recipe) {
   const btn = document.createElement("a");
   // If you later build a details page, swap "#" with something like:
   // `/recipe.html?id=${recipe.idMeal || recipe.id}`
-  btn.href = "#";
+  btn.href = "eachrecipe.html?id=" + encodeURIComponent(recipe.id || "");
   btn.className = "btn btn-primary btn-sm";
   btn.textContent = "View recipe";
   body.appendChild(btn);
