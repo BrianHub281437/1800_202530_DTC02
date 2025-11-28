@@ -18,7 +18,7 @@ import {
 
 const db = getFirestore();
 
-// In-memory list: { id, name, source: "manual" | "auto" }
+// In-memory list: { id, name, source: manual | auto }
 let fridgeIngredients = [];
 let currentUserUid = null;
 
