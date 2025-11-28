@@ -86,7 +86,8 @@ async function displayCardsDynamically() {
             // Populate the card with recipe data
             newcard.querySelector('.card-title').textContent = fridge.title;
             newcard.querySelector('.card-desc').textContent = fridge.description;
-            newcard.querySelector('.card-owner').textContent = fridge.owner;
+            //newcard.querySelector('.card-owner').textContent = fridge.userRef;
+            newcard.querySelector(".card-fridgeId").textContent = `fridge join code: ${doc.id}`;
             newcard.querySelector(".enter-fridge").href = `fridge.html?docID=${doc.id}`;
 
             // cool button that removes stuff
