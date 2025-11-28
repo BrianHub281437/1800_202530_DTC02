@@ -6,8 +6,7 @@ import {
 
 // imports for Firestore Database essentials
 import { db, auth } from "./firebaseConfig.js";
-import { doc, onSnapshot, getDoc, query, where, updateDoc, arrayUnion } from "firebase/firestore";
-import { collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, query, where, updateDoc, arrayUnion, collection, getDocs, arrayRemove, } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 
@@ -36,7 +35,7 @@ showDashboard();
 
 async function displayCardsDynamically() {
     let cardTemplate = document.getElementById("fridgeCardTemplate");
-    const fridgesCollectionRef = collection(db, "fridge");
+    //const fridgesCollectionRef = collection(db, "fridge");
     //console.log("hambuga: " + fridgesCollectionRef);
     try {
         //const querySnapshot = await getDocs(fridgesCollectionRef);
@@ -76,7 +75,8 @@ async function displayCardsDynamically() {
         const querySnapshot = await getDocs(fridgesQuery);
 
         querySnapshot.forEach(doc => {
-
+            const fridgeId = doc.id;
+            const fridgeIdTrm = fridgeId.trim();
 
             // Clone the template
             //console.log("hambuga: " + fridgesCollectionRef);
@@ -89,9 +89,41 @@ async function displayCardsDynamically() {
             newcard.querySelector('.card-owner').textContent = fridge.owner;
             newcard.querySelector(".enter-fridge").href = `fridge.html?docID=${doc.id}`;
 
+            // cool button that removes stuff
+            const removeBtn = newcard.querySelector(".remove-fridge");
+
+            removeBtn.addEventListener("click", async () => {
+                const confirmRemove = confirm(`Remove fridge ${fridgeIdTrm}?`);
+                if (!confirmRemove) return;
+
+                try {
+                    // Debug check
+                    console.log("Attempting to remove:", fridgeIdTrm);
+
+                    await updateDoc(userRef, {
+                        fridges: arrayRemove(fridgeIdTrm)
+                    });
+
+                    console.log("Successfully removed from Firestore.");
+
+                    // Remove from UI AFTER Firestore succeeds
+                    removeBtn.closest(".col").remove();
+                    alert("Fridge removed!");
+
+                } catch (err) {
+                    console.error("ERROR REMOVING FRIDGE:", err);
+                    alert("Error removing fridge.");
+                }
+            });
+
 
             // Attach the new card to the container
             document.getElementById("fridges-go-here").appendChild(newcard);
+
+            
+
+
+
         });
     } catch (error) {
         console.error("Error getting documents: ", error);
@@ -132,6 +164,9 @@ document.getElementById("fridge-form").addEventListener("submit", async (e) => {
         alert("Could not join fridge.");
     }
 });
+
+
+
 
 // Call the function to display cards when the page loads
 displayCardsDynamically();
