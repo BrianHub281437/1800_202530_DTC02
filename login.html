@@ -24,10 +24,15 @@
     <!------------------------------>
     <!-- Your HTML Layout go here -->
     <!------------------------------>
-     <!-- our own navbar goes here -->
-    <site-navbar></site-navbar>
+    <!-- our own navbar goes here -->
+    <nav class="navbar sticky-top navbar-expand-lg bg-danger">
+        <div class="container-fluid">
+            <p class="navbar-brand" href="main.html">Fridge.Nav</p>
+            
+        </div>
+    </nav>
     <!-- Stuff for body goes here -->
-    
+
     <div class="container py-5" style="max-width: 420px;">
         <!-- Alerts -->
         <div id="authAlert" class="alert alert-danger d-none" role="alert"></div>
@@ -44,9 +49,9 @@
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
-              <!-- NEW: forgot password link -->
+            <!-- NEW: forgot password link -->
             <div class="text-center mt-2">
-               <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+                <a href="#" id="forgotPasswordLink">Forgot your password?</a>
             </div>
             <small class="d-block mt-3 text-center">
                 Don’t have an account?
@@ -76,35 +81,35 @@
             </small>
         </div>
     </div>
-    
-     
-     <!----Footer-->
- <footer class="site-footer">
-  <div class="footer-container">
-    <p>&copy; 2025 Fridge.Nav | All Rights Reserved</p>
-    <div class="footer-links">
-      <a href="#">About</a>
-      <a href="#">Privacy Policy</a>
-      <a href="#">Contact</a>
-    </div>
-  </div>
-</footer>
 
 
-     
+    <!----Footer-->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>&copy; 2025 Fridge.Nav | All Rights Reserved</p>
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+
+
 
 
 
     <!---------------------------------------------->
-                    <!-- Your own JavaScript functions go here    -->
-                    <!---------------------------------------------->
-                    <!-- Link to scripts of your own -->
-                    <script type="module" src="./src/app.js"></script>
+    <!-- Your own JavaScript functions go here    -->
+    <!---------------------------------------------->
+    <!-- Link to scripts of your own -->
+    <script type="module" src="./src/app.js"></script>
 
-                    <script type="module" src="/src/firebaseConfig.js"></script>
-                    <script type="module" src="/src/authentication.js"></script>
-                    <script type="module" src="/src/loginSignup.js"></script>
-                    <script type="module" src="/src/forgotPassword.js"></script>
+    <script type="module" src="/src/firebaseConfig.js"></script>
+    <script type="module" src="/src/authentication.js"></script>
+    <script type="module" src="/src/loginSignup.js"></script>
+    <script type="module" src="/src/forgotPassword.js"></script>
 
 </body>
 
