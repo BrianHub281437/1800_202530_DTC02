@@ -51,4 +51,8 @@ body {
   border-radius: 12px;
 }
 
+.HIDE-ME {
+    visibility: hidden;
+}
+
 
