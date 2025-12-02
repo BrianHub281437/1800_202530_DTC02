@@ -1,4 +1,5 @@
-﻿import "bootstrap/dist/css/bootstrap.min.css";
+﻿// src/main.js
+import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 import { onAuthReady } from "./authentication.js";
 
@@ -40,7 +41,7 @@ function updateHero(recipe) {
   if (!recipe) {
     heroBackdrop.style.backgroundImage = "";
     heroRecipeText.textContent =
-      "No recipes found in your fridge yet. Try seeding some recipes.";
+      "No recipes found in your fridges yet. Add some recipes to a fridge.";
     heroControls.style.display = "none";
     return;
   }
@@ -113,7 +114,7 @@ function renderRecipesGrid(recipes) {
   if (!recipes.length) {
     const msg = document.createElement("p");
     msg.textContent =
-      "No recipes found in your fridge yet. Try seeding recipes from the fridge page.";
+      "No recipes found in any of your fridges yet. Add recipes to a fridge to see them here.";
     recipesGrid.appendChild(msg);
     return;
   }
@@ -160,9 +161,11 @@ async function loadRecipesFromFridge(fridgeId) {
 }
 
 /**
- * Get the user's "primary" fridge ID (first in their fridges array).
+ * Find a fridge for this user that actually has recipes.
+ * Looks through all fridge IDs in user.fridges and returns
+ * the first one that has at least 1 recipe in fridge/{id}/recipes.
  */
-async function getPrimaryFridgeIdForUser(user) {
+async function findFridgeWithRecipesForUser(user) {
   if (!user) return null;
 
   try {
@@ -176,28 +179,46 @@ async function getPrimaryFridgeIdForUser(user) {
 
     const data = snap.data();
     const fridges = data.fridges || [];
-    if (!fridges.length) return null;
 
-    return fridges[0]; // first fridge as main
+    if (!fridges.length) {
+      console.warn("User has no fridges array.");
+      return null;
+    }
+
+    // Try each fridge in order until we find one that has recipes
+    for (const fridgeId of fridges) {
+      const recipesCol = collection(db, "fridge", fridgeId, "recipes");
+      const snapshot = await getDocs(query(recipesCol, limit(1)));
+
+      if (!snapshot.empty) {
+        console.log("Using fridge with recipes:", fridgeId);
+        return fridgeId;
+      }
+    }
+
+    // If we got here, none of the fridges had recipes
+    console.warn("No fridges with recipes found for user.");
+    return null;
   } catch (err) {
-    console.error("Error getting primary fridge ID:", err);
+    console.error("Error finding fridge with recipes:", err);
     return null;
   }
 }
 
 /**
- * Initialize hero + grid using recipes from user's primary fridge.
+ * Initialize hero + grid using recipes from the first fridge
+ * (in user.fridges) that actually has recipes.
  */
 async function initRecipesUIForUser(user) {
   const statusEl = document.getElementById("hero-recipe-text");
 
-  const fridgeId = await getPrimaryFridgeIdForUser(user);
+  const fridgeId = await findFridgeWithRecipesForUser(user);
 
   if (!fridgeId) {
-    console.warn("User has no fridges associated.");
+    console.warn("No fridge with recipes found for this user.");
     if (statusEl) {
       statusEl.textContent =
-        "No fridge found for your account yet. Create or join a fridge to see recipes.";
+        "No recipes found in any of your fridges yet. Add recipes to a fridge to see them here.";
     }
     renderRecipesGrid([]);
     return;
@@ -215,7 +236,7 @@ async function initRecipesUIForUser(user) {
   // Populate grid with all recipes from this fridge
   renderRecipesGrid(recipes);
 
-  // Hook up hero prev/next if buttons exist
+  // Hero prev/next
   const prevBtn = document.getElementById("prevHero");
   const nextBtn = document.getElementById("nextHero");
 
@@ -241,7 +262,7 @@ async function initRecipesUIForUser(user) {
  * Show dashboard:
  * - Ensures user is logged in
  * - Fills "Hello <name>" line
- * - Then initializes the recipes UI from their primary fridge
+ * - Then initializes the recipes UI from a fridge that has recipes
  */
 function showDashboard() {
   const nameElement = document.getElementById("name-goes-here");
