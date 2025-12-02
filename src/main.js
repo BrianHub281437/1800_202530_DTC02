@@ -10,21 +10,23 @@ import {
   query,
   orderBy,
   limit,
+  doc,
+  getDoc,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-// Use the default Firebase app that authentication.js initialized
 const db = getFirestore();
 
-// We'll keep these in module scope so hero next/prev buttons can access them
+// Globals so hero + cards can use them
 let featuredRecipes = [];
 let heroIndex = 0;
+let currentFridgeId = null;
 
 /**
  * Update the hero section based on a single recipe object.
- * Expects the following IDs in your HTML:
+ * Expects:
  *  - #hero-backdrop
  *  - #hero-recipe-text
- *  - #hero-controls (wrapper for prev/next buttons)
+ *  - #hero-controls
  */
 function updateHero(recipe) {
   const heroBackdrop = document.getElementById("hero-backdrop");
@@ -32,13 +34,13 @@ function updateHero(recipe) {
   const heroControls = document.getElementById("hero-controls");
 
   if (!heroBackdrop || !heroRecipeText || !heroControls) {
-    // If those elements don't exist, quietly bail out.
     return;
   }
 
   if (!recipe) {
     heroBackdrop.style.backgroundImage = "";
-    heroRecipeText.textContent = "No recipes found in your collection yet.";
+    heroRecipeText.textContent =
+      "No recipes found in your fridge yet. Try seeding some recipes.";
     heroControls.style.display = "none";
     return;
   }
@@ -55,13 +57,12 @@ function updateHero(recipe) {
   if (recipe.area) parts.push(`Cuisine: ${recipe.area}`);
 
   heroRecipeText.textContent = parts.join(" • ");
-
   heroControls.style.display = featuredRecipes.length > 1 ? "flex" : "none";
 }
 
 /**
- * Create a card element for a recipe to be placed in the grid.
- * Expects a container with id="recipes-grid" in your HTML.
+ * Build a recipe card for the grid.
+ * Expects a container with id="recipes-grid" in HTML.
  */
 function createRecipeCard(recipe) {
   const card = document.createElement("article");
@@ -89,16 +90,12 @@ function createRecipeCard(recipe) {
   meta.textContent = metaParts.join(" • ");
   body.appendChild(meta);
 
-  // Optional: link to a detail page
+  // View recipe button – include BOTH fridgeId and recipe id in URL
   const btn = document.createElement("a");
-
-// IMPORTANT: use the Firestore doc ID we set as recipe.id
-btn.href = `eachRecipe.html?id=${recipe.id}`;
-
-btn.className = "btn btn-primary btn-sm";
-btn.textContent = "View recipe";
-body.appendChild(btn);
-
+  btn.href = `/eachRecipe.html?fridgeId=${currentFridgeId}&id=${recipe.id}`;
+  btn.className = "btn btn-primary btn-sm";
+  btn.textContent = "View recipe";
+  body.appendChild(btn);
 
   card.appendChild(body);
   return card;
@@ -109,15 +106,14 @@ body.appendChild(btn);
  */
 function renderRecipesGrid(recipes) {
   const recipesGrid = document.getElementById("recipes-grid");
-  if (!recipesGrid) {
-    return;
-  }
+  if (!recipesGrid) return;
 
   recipesGrid.innerHTML = "";
 
   if (!recipes.length) {
     const msg = document.createElement("p");
-    msg.textContent = "No recipes found in your Firebase collection yet.";
+    msg.textContent =
+      "No recipes found in your fridge yet. Try seeding recipes from the fridge page.";
     recipesGrid.appendChild(msg);
     return;
   }
@@ -129,28 +125,21 @@ function renderRecipesGrid(recipes) {
 }
 
 /**
- * Load recipes from Firestore "recipes" collection.
- * Assumes your docs look something like:
- * {
- *   idMeal: string,
- *   name: string,
- *   category: string,
- *   area: string,
- *   instructions: string,
- *   thumbnail: string,
- *   tags: string[],
- *   youtube: string,
- *   createdAt: Timestamp
- * }
+ * Load recipes from a specific fridge's "recipes" subcollection:
+ *   fridge/{fridgeId}/recipes
  */
-async function loadRecipesFromFirestore() {
+async function loadRecipesFromFridge(fridgeId) {
+  if (!fridgeId) {
+    console.warn("No fridgeId provided to loadRecipesFromFridge");
+    return [];
+  }
+
   try {
-    const recipesCol = collection(db, "recipes");
-    // If you didn't set createdAt, you can remove orderBy + limit
+    const recipesCol = collection(db, "fridge", fridgeId, "recipes");
     const q = query(recipesCol, orderBy("createdAt", "desc"), limit(20));
     const snapshot = await getDocs(q);
 
-    const recipes = snapshot.docs.map((docSnap) => {
+    return snapshot.docs.map((docSnap) => {
       const data = docSnap.data();
       return {
         id: docSnap.id,
@@ -164,26 +153,66 @@ async function loadRecipesFromFirestore() {
         youtube: data.youtube || "",
       };
     });
-
-    return recipes;
   } catch (err) {
-    console.error("Error loading recipes from Firestore:", err);
+    console.error("Error loading recipes from fridge:", err);
     return [];
   }
 }
 
 /**
- * Initialize the hero and grid using recipes from Firestore.
+ * Get the user's "primary" fridge ID (first in their fridges array).
  */
-async function initRecipesUI() {
-  const recipes = await loadRecipesFromFirestore();
+async function getPrimaryFridgeIdForUser(user) {
+  if (!user) return null;
+
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      console.warn("User document not found for:", user.uid);
+      return null;
+    }
+
+    const data = snap.data();
+    const fridges = data.fridges || [];
+    if (!fridges.length) return null;
+
+    return fridges[0]; // first fridge as main
+  } catch (err) {
+    console.error("Error getting primary fridge ID:", err);
+    return null;
+  }
+}
+
+/**
+ * Initialize hero + grid using recipes from user's primary fridge.
+ */
+async function initRecipesUIForUser(user) {
+  const statusEl = document.getElementById("hero-recipe-text");
+
+  const fridgeId = await getPrimaryFridgeIdForUser(user);
+
+  if (!fridgeId) {
+    console.warn("User has no fridges associated.");
+    if (statusEl) {
+      statusEl.textContent =
+        "No fridge found for your account yet. Create or join a fridge to see recipes.";
+    }
+    renderRecipesGrid([]);
+    return;
+  }
+
+  currentFridgeId = fridgeId;
+
+  const recipes = await loadRecipesFromFridge(fridgeId);
 
   // Use first few as "featured" for hero
   featuredRecipes = recipes.slice(0, 5);
   heroIndex = 0;
   updateHero(featuredRecipes[0]);
 
-  // Populate grid with all recipes
+  // Populate grid with all recipes from this fridge
   renderRecipesGrid(recipes);
 
   // Hook up hero prev/next if buttons exist
@@ -193,7 +222,8 @@ async function initRecipesUI() {
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
       if (!featuredRecipes.length) return;
-      heroIndex = (heroIndex - 1 + featuredRecipes.length) % featuredRecipes.length;
+      heroIndex =
+        (heroIndex - 1 + featuredRecipes.length) % featuredRecipes.length;
       updateHero(featuredRecipes[heroIndex]);
     });
   }
@@ -211,27 +241,23 @@ async function initRecipesUI() {
  * Show dashboard:
  * - Ensures user is logged in
  * - Fills "Hello <name>" line
- * - Then initializes the recipes UI from Firestore
+ * - Then initializes the recipes UI from their primary fridge
  */
 function showDashboard() {
   const nameElement = document.getElementById("name-goes-here");
 
   onAuthReady(async (user) => {
     if (!user) {
-      // If no user is signed in → redirect back to login page.
       location.href = "index.html";
       return;
     }
 
-    // If a user is logged in:
     const name = user.displayName || user.email;
-
     if (nameElement) {
       nameElement.textContent = `${name}!`;
     }
 
-    // Once we know the user is valid, load recipes UI
-    await initRecipesUI();
+    await initRecipesUIForUser(user);
   });
 }
 
