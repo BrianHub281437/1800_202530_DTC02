@@ -1,192 +1,204 @@
-import { onAuthReady } from "./authentication.js";
+// src/eachrecipe.js
+
+import { db, auth } from "./firebaseConfig.js";
 import {
-  getFirestore,
   doc,
   getDoc,
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
-const db = getFirestore();
+let currentUserId = null;      // logged-in user's uid
+let currentRecipeId = null;    // recipe docID from URL
 
-// Get ?id= from URL
-const params = new URLSearchParams(window.location.search);
-const recipeId = params.get("id");
+// Get the document ID (?docID=...) from the URL
+function getDocIdFromUrl() {
+  const params = new URL(window.location.href).searchParams;
 
-// DOM elements
-const titleEl = document.getElementById("recipe-title");
-const imgEl = document.getElementById("recipe-image");
-const metaEl = document.getElementById("recipe-meta");
-const ingredientsList = document.getElementById("ingredients-list");
-const instructionsEl = document.getElementById("instructions");
-const youtubeContainer = document.getElementById("youtube-container");
+  // Support both ?docID=... and ?id=...
+  const fromDocID = params.get("docID");
+  const fromId = params.get("id");
 
-/** Render array of { name, measure } */
-function renderIngredientsArray(ingredients) {
-  ingredientsList.innerHTML = "";
+  return fromDocID || fromId;
+}
 
-  if (!Array.isArray(ingredients) || ingredients.length === 0) {
-    ingredientsList.innerHTML = "<li>No ingredient data available.</li>";
+// -----------------------------------
+// LOAD & DISPLAY RECIPE FROM FIRESTORE
+// -----------------------------------
+async function displayRecipeInfo() {
+  const id = getDocIdFromUrl();
+  currentRecipeId = id;
+
+  if (!id) {
+    console.error("No docID in URL");
+    document.getElementById("recipe-title").textContent =
+      "Recipe not found (no ID).";
     return;
   }
 
-  ingredients.forEach((ing) => {
-    const name =
-      ing.name ||
-      ing.ingredient ||
-      ing.strIngredient ||
-      "";
-    const measure =
-      ing.measure ||
-      ing.amount ||
-      ing.strMeasure ||
-      "";
-
-    const parts = [measure, name].filter(Boolean);
-    const li = document.createElement("li");
-    li.textContent = parts.join(" ");
-    ingredientsList.appendChild(li);
-  });
-}
-
-/** Get full details from TheMealDB using idMeal */
-async function fetchMealDbDetails(idMeal) {
   try {
-    const res = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
-        idMeal
-      )}`
-    );
-    const data = await res.json();
-    if (!data.meals || !data.meals[0]) {
-      return null;
-    }
+    const recipeRef = doc(db, "recipes", id);
+    const recipeSnap = await getDoc(recipeRef);
 
-    const meal = data.meals[0];
-
-    // Build proper ingredients array: { name, measure }
-    const ingredients = [];
-    for (let i = 1; i <= 20; i++) {
-      const ing = meal[`strIngredient${i}`];
-      const meas = meal[`strMeasure${i}`];
-      if (ing && ing.trim()) {
-        ingredients.push({
-          name: ing.trim(),              // <-- ingredient name
-          measure: (meas || "").trim(),  // <-- "5 tablespoons", "1 chopped", etc.
-        });
-      }
-    }
-
-    return {
-      instructions: meal.strInstructions || "",
-      ingredients,
-    };
-  } catch (err) {
-    console.error("Error fetching from TheMealDB:", err);
-    return null;
-  }
-}
-
-async function loadRecipe() {
-  if (!recipeId) {
-    console.error("No recipe id in URL.");
-    titleEl.textContent = "Recipe not found.";
-    return;
-  }
-
-  console.log(" Loading recipe with id:", recipeId);
-
-  try {
-    const recipeRef = doc(db, "recipes", recipeId);
-    const snap = await getDoc(recipeRef);
-
-    if (!snap.exists()) {
-      console.error(" No Firestore doc for id:", recipeId);
-      titleEl.textContent = "Recipe not found.";
+    if (!recipeSnap.exists()) {
+      document.getElementById("recipe-title").textContent =
+        "Recipe not found in database.";
       return;
     }
 
-    const data = snap.data();
-    console.log(" Loaded Firestore recipe:", data);
+    const recipe = recipeSnap.data();
 
-    // TITLE
-    titleEl.textContent = data.name || "Untitled recipe";
+    const name = recipe.name || "";
+    const tags = recipe.tags || "";
+    const instructions = recipe.instructions || "";
+    const ingredientsArray = recipe.ingredients || [];
+    const thumbnail = recipe.thumbnail || "";
 
-    // IMAGE
-    if (data.thumbnail) {
-      imgEl.src = data.thumbnail;
-      imgEl.alt = data.name || "Recipe image";
-    } else {
-      imgEl.style.display = "none";
+    // Title
+    document.getElementById("recipe-title").textContent = name;
+
+    // Meta (tags etc.)
+    document.getElementById("recipe-meta").textContent = tags;
+
+    // Image
+    const img = document.getElementById("recipe-image");
+    if (img) {
+      img.src = thumbnail;
+      img.alt = `${name} image`;
     }
 
-    // META
-    const metaParts = [];
-    if (data.category) metaParts.push(data.category);
-    if (data.area) metaParts.push(data.area);
-    metaEl.textContent = metaParts.join(" • ");
+    // Ingredients list (ul)
+    const ingredientsList = document.getElementById("ingredients-list");
+    ingredientsList.innerHTML = "";
+    ingredientsArray.forEach((obj) => {
+      const li = document.createElement("li");
+      li.textContent = `${obj.ingredient} – ${obj.measure}`;
+      ingredientsList.appendChild(li);
+    });
 
-    // Start with instructions from Firestore if present
-    let instructions = data.instructions || "";
+    // Instructions
+    document.getElementById("instructions").textContent = instructions;
 
-    // Always try to enrich with MealDB if idMeal exists
-    let ingredients = [];
-    if (data.idMeal) {
-      const extra = await fetchMealDbDetails(data.idMeal);
-      if (extra) {
-        if (!instructions) {
-          instructions = extra.instructions;
-        }
-        ingredients = extra.ingredients;
-      }
-    }
-
-    // Fallback if still no instructions
-    instructionsEl.textContent =
-      instructions || "No instructions provided.";
-
-    // Render ingredients
-    renderIngredientsArray(ingredients);
-
-    // YOUTUBE EMBED
-    youtubeContainer.innerHTML = "";
-    if (data.youtube) {
-      try {
-        const url = new URL(data.youtube);
-        let videoId = "";
-
-        if (url.hostname.includes("youtube.com")) {
-          videoId = url.searchParams.get("v");
-        } else if (url.hostname.includes("youtu.be")) {
-          videoId = url.pathname.replace("/", "");
-        }
-
-        if (videoId) {
-          youtubeContainer.innerHTML = `
-            <iframe 
-              width="100%" 
-              height="360" 
-              src="https://www.youtube.com/embed/${videoId}" 
-              title="YouTube recipe video"
-              frameborder="0"
-              allowfullscreen
-              style="border-radius: 12px; margin-top: 20px;">
-            </iframe>
-          `;
-        }
-      } catch (e) {
-        console.error("Invalid YouTube URL:", data.youtube);
-      }
-    }
-  } catch (err) {
-    console.error("🔥 Error loading recipe:", err);
-    titleEl.textContent = "Error loading recipe.";
+    // After loading recipe, set bookmark button state
+    await updateBookmarkButtonState();
+  } catch (error) {
+    console.error("Error loading recipe:", error);
+    document.getElementById("recipe-title").textContent =
+      "Error loading recipe.";
   }
 }
 
-onAuthReady(async (user) => {
-  if (!user) {
-    location.href = "index.html";
+// -----------------------------------
+// AUTH – keep user id
+// -----------------------------------
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUserId = user.uid;
+    console.log("LOGGED IN:", currentUserId);
+  } else {
+    currentUserId = null;
+    console.log("NOT LOGGED IN");
+  }
+
+  // whenever auth changes, refresh button
+  updateBookmarkButtonState();
+});
+
+// -----------------------------------
+// BOOKMARK BUTTON STATE
+// -----------------------------------
+async function updateBookmarkButtonState() {
+  const bookmarkBtn = document.getElementById("bookmarkBtn");
+  if (!bookmarkBtn) return;
+
+  // default text
+  bookmarkBtn.textContent = "Add to bookmarks";
+
+  // need user + recipe to know real state
+  if (!currentUserId || !currentRecipeId) return;
+
+  try {
+    const userDocRef = doc(db, "users", currentUserId);
+    const userSnap = await getDoc(userDocRef);
+
+    const data = userSnap.exists() ? userSnap.data() : {};
+    const bookmarks = data.bookmarks || [];
+    const isBookmarked = bookmarks.includes(currentRecipeId);
+
+    bookmarkBtn.dataset.bookmarked = isBookmarked ? "true" : "false";
+    bookmarkBtn.textContent = isBookmarked
+      ? "Remove bookmark"
+      : "Add to bookmarks";
+  } catch (err) {
+    console.error("Error checking bookmarks:", err);
+  }
+}
+
+// -----------------------------------
+// TOGGLE BOOKMARK
+// -----------------------------------
+async function toggleBookmark() {
+  const bookmarkBtn = document.getElementById("bookmarkBtn");
+
+  if (!currentRecipeId) {
+    console.warn("No recipe ID in URL.");
     return;
   }
 
-  await loadRecipe();
+  if (!currentUserId) {
+    alert("Please log in to bookmark recipes.");
+    return;
+  }
+
+  try {
+    const userDocRef = doc(db, "users", currentUserId);
+    let userSnap = await getDoc(userDocRef);
+
+    // If user doc doesn't exist, create it
+    if (!userSnap.exists()) {
+      await setDoc(
+        userDocRef,
+        {
+          bookmarks: [],
+        },
+        { merge: true }
+      );
+      userSnap = await getDoc(userDocRef);
+    }
+
+    const data = userSnap.data() || {};
+    const bookmarks = data.bookmarks || [];
+    const alreadyBookmarked = bookmarks.includes(currentRecipeId);
+
+    await updateDoc(userDocRef, {
+      bookmarks: alreadyBookmarked
+        ? arrayRemove(currentRecipeId)
+        : arrayUnion(currentRecipeId),
+    });
+
+    console.log(
+      alreadyBookmarked ? "Removed bookmark" : "Added bookmark",
+      currentRecipeId
+    );
+
+    await updateBookmarkButtonState();
+  } catch (err) {
+    console.error("Error updating bookmarks:", err);
+    if (bookmarkBtn) bookmarkBtn.textContent = "Error – try again";
+  }
+}
+
+// -----------------------------------
+// INITIAL SETUP
+// -----------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const bookmarkBtn = document.getElementById("bookmarkBtn");
+  if (bookmarkBtn) {
+    bookmarkBtn.addEventListener("click", toggleBookmark);
+  }
+
+  displayRecipeInfo();
 });

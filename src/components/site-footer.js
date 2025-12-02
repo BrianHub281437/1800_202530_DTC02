@@ -1,33 +1,19 @@
+// src/components/site-footer.js
+
 class SiteFooter extends HTMLElement {
-    connectedCallback() {
-        this.innerHTML = `
-             <footer class="site-footer">
-     <div class="footer-container">
+  connectedCallback() {
+    this.innerHTML = `
+      <footer class="site-footer">
 
-         <div class="footer-links">
+        <nav class="bottom-nav">
+          <a href="javascript:history.back()" class="bottom-nav-link">Back</a>
+          <a href="/search.html" class="bottom-nav-link">Search</a>
+          <a href="/bookmarks.html" class="bottom-nav-link">Bookmarks</a>
+        </nav>
 
-             <a href="#">Back</a>
-             <a href="#">Search</a>
-             <a href="#">Bookmarks</a>
-
-         </div>
-
-
-
-
-
-             <!--
-        <p>&copy; 2025 Fridge.Nav | All Rights Reserved</p>
-        <div class="footer-links">
-          <a href="#">About</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Contact</a>
-        </div>
-        -->
-         </div>
-</footer>
-        `;
-    }
+      </footer>
+    `;
+  }
 }
 
-customElements.define('site-footer', SiteFooter);
+customElements.define("site-footer", SiteFooter);

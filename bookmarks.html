@@ -9,81 +9,32 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Other libraries go here -->
-
-    <!-- Link to styles of your own -->
-
-    <link rel="stylesheet" href="./styles/style.css">
-
-    <!-- Web Components -->
+    <!-- Web Components for shared navbar and footer layout -->
     <script type="module" src="/src/components/site-navbar.js"></script>
     <script type="module" src="/src/components/site-footer.js"></script>
 
+    <!-- Link to styles of your own -->
+    <link rel="stylesheet" href="./styles/style.css">
 </head>
 
 <body>
-
-    <!------------------------------>
-    <!-- Your HTML Layout go here -->
-    <!------------------------------>
-    <!-- Stuff for body goes here -->
+    <!-- navbar -->
     <site-navbar></site-navbar>
 
+    <!-- main content -->
+    <div class="wrap" style="padding-top: 120px;">
+        <h1>My Bookmarked Recipes</h1>
 
+        <!-- ✅ JS will fill this with recipe cards -->
+        <div id="bookmarksContainer" class="recipe-grid"></div>
+    </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-  <div class="col">
-    <div class="card h-100">
-      <img src="https://www.foodandwine.com/thmb/XE8ubzwObCIgMw7qJ9CsqUZocNM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/MSG-Smash-Burger-FT-RECIPE0124-d9682401f3554ef683e24311abdf342b.jpg" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">Smash Burger</h5>
-        <p class="card-text">Smash burgers for your next barbecue</p>
-      </div>
-      <button class="btn btn-primary btn-lg" type="button">See recipe</button>
-      <div class="card-footer">
-        <small class="text-muted">By user: AHMADKAAAHLILL332</small>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card h-100">
-      <img src="https://www.primalkitchen.com/cdn/shop/articles/20240905221054-pk-greek-salad-0214-min.jpg?v=1725643684" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">Greek Salad</h5>
-        <p class="card-text">Best eaten to lose weight</p>
-      </div>
-      <button class="btn btn-primary btn-lg" type="button">See recipe</button>
-      <div class="card-footer">
-        <small class="text-muted">By User: BrianHub281437</small>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card h-100">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Pizza-3007395.jpg" class="card-img-top" alt="hike">
-      <div class="card-body">
-        <h5 class="card-title">Pizza</h5>
-        <p class="card-text">Made by all natural ingredients</p>
-      </div>
-      <button class="btn btn-primary btn-lg" type="button">See recipe</button>
-      <div class="card-footer">
-        <small class="text-muted">By User: CbassRoby2</small>
-      </div>
-    </div>
-  </div>
-</div>
-<button class="btn btn-success btn-lg position-fixed bottom-0 start-0 m-4 shadow">
-    + Add Post
-  </button>
-
-    <!----Footer-->
+    <!-- footer -->
     <site-footer></site-footer>
-    <!---------------------------------------------->
-                    <!-- Your own JavaScript functions go here    -->
-                    <!---------------------------------------------->
-                    <!-- Link to scripts of your own -->
-                    <script type="module" src="./src/app.js"></script>
 
+    <!-- scripts -->
+    <script type="module" src="/src/app.js"></script>
+    <script type="module" src="/src/boomarks.js" ></script>
 </body>
 
 </html>
