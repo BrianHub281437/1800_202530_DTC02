@@ -1,15 +1,15 @@
-// src/recipeSeeder.js
+// src/recipe.js
 // -------------------------------------------------------------
-// Fetch random recipes from TheMealDB and save them into Firestore.
+// Fetch random recipes from TheMealDB and save them into Firestore
+// under a specific fridge:
+//   fridge/{fridgeId}/recipes/{recipeDoc}
 // Includes full ingredient + measure lists for each recipe.
 // -------------------------------------------------------------
 
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "./firebaseConfig.js"; // change to "./firebaseConfig.js" if that's your filename
+import { db } from "./firebaseConfig.js";
 
-// -------------------------------------------------------------
-// Fetch "chicken" recipes (optional, not used by the seeder below)
-// -------------------------------------------------------------
+// Optional helper (not strictly needed now)
 async function getRecipes() {
   const response = await fetch(
     "https://www.themealdb.com/api/json/v1/1/search.php?s=chicken"
@@ -39,7 +39,7 @@ function extractIngredients(recipe) {
 
     if (ing && ing.trim()) {
       ingredients.push({
-        ingredient: ing.trim(),
+        name: ing.trim(),                    // normalized field name
         measure: measure?.trim() || "",
       });
     }
@@ -69,15 +69,21 @@ async function getRandomRecipes(count = 20) {
 }
 
 // -------------------------------------------------------------
-// Save an array of recipes into Firestore
+// Save an array of recipes into a specific fridge's subcollection:
+//   fridge/{fridgeId}/recipes
 // -------------------------------------------------------------
-async function saveRecipesToFirestore(recipes) {
+async function saveRecipesToFirestoreForFridge(fridgeId, recipes) {
+  if (!fridgeId) {
+    console.error("❌ No fridgeId provided to saveRecipesToFirestoreForFridge");
+    return;
+  }
+
   if (!recipes || recipes.length === 0) {
     console.log("No recipes to save.");
     return;
   }
 
-  const recipesColRef = collection(db, "recipes");
+  const recipesColRef = collection(db, "fridge", fridgeId, "recipes");
 
   const writePromises = recipes.map((recipe) =>
     addDoc(recipesColRef, {
@@ -91,7 +97,7 @@ async function saveRecipesToFirestore(recipes) {
         ? recipe.strTags.split(",").map((t) => t.trim())
         : [],
       youtube: recipe.strYoutube ?? null,
-      ingredients: extractIngredients(recipe), // 👈 now saved
+      ingredients: extractIngredients(recipe),
       source: "themealdb",
       createdAt: serverTimestamp(),
     })
@@ -99,20 +105,20 @@ async function saveRecipesToFirestore(recipes) {
 
   await Promise.all(writePromises);
   console.log(
-    `✅ Saved ${recipes.length} recipes to Firestore (with ingredients)`
+    `✅ Saved ${recipes.length} recipes to fridge ${fridgeId} (with ingredients)`
   );
 }
 
 // -------------------------------------------------------------
-// Combined runner: fetch random recipes and store them
+// Exported runner: fetch random recipes and store them for a fridge
 // -------------------------------------------------------------
-export async function fetchAndStoreRandomRecipes(count = 10) {
+export async function fetchAndStoreRandomRecipesForFridge(
+  fridgeId,
+  count = 10
+) {
   const recipes = await getRandomRecipes(count);
-  await saveRecipesToFirestore(recipes);
+  await saveRecipesToFirestoreForFridge(fridgeId, recipes);
 }
 
-// -------------------------------------------------------------
-// Auto-run once when this file is loaded (optional)
-// Comment this out if you only want to run it manually.
-// -------------------------------------------------------------
-fetchAndStoreRandomRecipes(10).catch(console.error);
+// ❌ No auto-run at the bottom anymore
+// You must call fetchAndStoreRandomRecipesForFridge(fridgeId) from fridge.js

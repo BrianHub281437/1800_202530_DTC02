@@ -55,4 +55,10 @@ body {
     visibility: hidden;
 }
 
+#instructions li.step-heading {
+  list-style-type: none;   /* removes the bullet */
+  font-weight: 700;        /* bold */
+  margin-top: 12px;        /* space before each step heading */
+}
+
 
