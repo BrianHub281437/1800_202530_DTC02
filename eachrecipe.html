@@ -2,57 +2,52 @@
 <html lang="en">
 
 <head>
-    <title>My BCIT Project</title>
-    <meta name="comp1800 template" content="My 1800 App">
+  <title>My BCIT Project</title>
+  <meta name="comp1800 template" content="My 1800 App">
 
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-   <!-- Web Components for shared navbar and footer layout -->
-    <script type="module" src="/src/components/site-navbar.js"></script>
-    <script type="module" src="/src/components/site-footer.js"></script>
+  <!-- Web Components for shared navbar and footer layout -->
+  <script type="module" src="/src/components/site-navbar.js"></script>
+  <script type="module" src="/src/components/site-footer.js"></script>
 
-    <!-- Link to styles of your own -->
-    <link rel="stylesheet" href="./styles/style.css">
-
+  <!-- Your styles -->
+  <link rel="stylesheet" href="./styles/style.css" />
 </head>
 
 <body>
-    <!------------------------------>
-    <!-- Your HTML Layout go here -->
-    <!------------------------------>
-    <!-- our own navbar goes here -->
-    <site-navbar></site-navbar>
+  <site-navbar></site-navbar>
 
-    <!-- Main content goes here -->
-<div class="wrap" style="padding-top: 120px;">
-        <h1 id="recipe-title">Loading recipe...</h1>
+  <div class="wrap" style="padding-top: 120px;">
+    <h1 id="recipe-title">Loading recipe...</h1>
 
-        <img id="recipe-image" style="width: 100%; max-width: 500px; border-radius: 12px; margin-top: 16px;" />
+    <!-- Bookmark button Ahmad added -->
+    <button id="bookmarkBtn" class="btn btn-primary" style="margin: 12px 0;">
+      Add to bookmarks
+    </button>
 
-        <p id="recipe-meta" style="margin: 16px 0; font-size: 1.1rem;"></p>
+    <p id="recipe-meta"></p>
 
-        <h2>Ingredients</h2>
-        <ul id="ingredients-list"></ul>
+    <img id="recipe-image"
+         style="width: 100%; max-width: 500px; border-radius: 12px; margin-top: 16px;" />
 
-        <h2>Instructions</h2>
-        <ul id="instructions"></ul>
+    <h2>Ingredients</h2>
+    <ul id="ingredients-list"></ul>
 
-        <div id="youtube-container" style="margin-top: 20px;"></div>
+    <h2>Instructions</h2>
+    <p id="instructions"></p>
 
-        <a href="main.html" class="btn btn-secondary" style="margin-top: 30px; display: inline-block;">← Back</a>
-    </div>
-    <!-- our own footer goes here -->
-    <site-footer></site-footer>
+    <div id="youtube-container" style="margin-top: 20px;"></div>
 
-    <!---------------------------------------------->
-    <!-- Your own JavaScript scripts go here      -->
-    <!---------------------------------------------->
+    <a href="main.html" class="btn btn-secondary" style="margin-top: 30px; display: inline-block;">← Back</a>
+  </div>
 
-    <script type="module" src="/src/app.js"></script>
-    <script type="module" src="/src/eachrecipe.js"></script>
+  <site-footer></site-footer>
 
+  <!-- Scripts -->
+  <script type="module" src="/src/app.js"></script>
+  <script type="module" src="/src/eachrecipe.js"></script>
 </body>
 
 </html>

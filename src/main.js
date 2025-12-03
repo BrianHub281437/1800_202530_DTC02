@@ -10,6 +10,8 @@ import {
   query,
   orderBy,
   limit,
+  doc,
+  getDoc,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const db = getFirestore();
@@ -20,6 +22,61 @@ const PUBLIC_FRIDGE_ID = "XXXX"; // e.g. "AThzw3kBcRC5g8WT5xbf" or similar
 let featuredRecipes = [];
 let heroIndex = 0;
 let currentFridgeId = PUBLIC_FRIDGE_ID;
+
+// --- NEW: bookmark state in memory ---
+let currentUserId = null;
+let userBookmarks = new Set();
+
+/**
+ * Bookmark key format (must match your eachrecipe.js):
+ *   fridge:<fridgeId>:<recipeId>
+ * (and optionally recipe:<recipeId> if you ever use global recipes)
+ */
+function buildBookmarkKey(fridgeId, recipeId) {
+  if (!recipeId) return null;
+
+  if (fridgeId) {
+    return `fridge:${fridgeId}:${recipeId}`;
+  }
+  return `recipe:${recipeId}`;
+}
+
+function isRecipeBookmarked(fridgeId, recipeId) {
+  const key = buildBookmarkKey(fridgeId, recipeId);
+  if (!key) return false;
+  return userBookmarks.has(key);
+}
+
+/**
+ * Load the logged-in user's bookmarks from Firestore into userBookmarks.
+ * Assumes a document:
+ *   users/{uid}.bookmarks = [ "fridge:...:...", "fridge:...:..." ]
+ */
+async function loadUserBookmarks(user) {
+  if (!user) {
+    userBookmarks = new Set();
+    return;
+  }
+
+  currentUserId = user.uid;
+
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      userBookmarks = new Set();
+      return;
+    }
+
+    const data = snap.data();
+    const arr = Array.isArray(data.bookmarks) ? data.bookmarks : [];
+    userBookmarks = new Set(arr);
+  } catch (err) {
+    console.error("Error loading user bookmarks:", err);
+    userBookmarks = new Set();
+  }
+}
 
 /**
  * Update the hero section based on a single recipe object.
@@ -59,7 +116,7 @@ function updateHero(recipe) {
  */
 function createRecipeCard(recipe) {
   const card = document.createElement("article");
-  card.className = "recipe-card";
+  card.className = "recipe-card position-relative";
 
   if (recipe.thumbnail) {
     const img = document.createElement("img");
@@ -83,15 +140,53 @@ function createRecipeCard(recipe) {
   meta.textContent = metaParts.join(" • ");
   body.appendChild(meta);
 
-  // View recipe button – everyone uses the same PUBLIC_FRIDGE_ID
+  // ----- BOOKMARK INDICATOR -----
+  // Only show this if the recipe is actually bookmarked in Firestore
+  const bookmarked = isRecipeBookmarked(currentFridgeId, recipe.id);
+  if (bookmarked) {
+    const indicator = document.createElement("i");
+    indicator.className = "bi bi-bookmark-fill recipe-bookmark-indicator";
+    indicator.dataset.key = buildBookmarkKey(currentFridgeId, recipe.id);
+    indicator.title = "Bookmarked";
+
+    // position bottom-right
+    indicator.style.position = "absolute";
+    indicator.style.bottom = "10px";
+    indicator.style.right = "10px";
+    indicator.style.fontSize = "1.5rem";
+    indicator.style.color = "#0d6efd";
+
+    card.appendChild(indicator);
+  }
+
+  // ----- VIEW RECIPE BUTTON -----
   const btn = document.createElement("a");
-  btn.href = `/eachRecipe.html?fridgeId=${PUBLIC_FRIDGE_ID}&id=${recipe.id}`;
-  btn.className = "btn btn-primary btn-sm";
+  btn.href = `/eachRecipe.html?fridgeId=${currentFridgeId}&id=${recipe.id}`;
+  btn.className = "btn btn-primary btn-sm mt-2";
   btn.textContent = "View recipe";
   body.appendChild(btn);
 
   card.appendChild(body);
   return card;
+}
+
+/**
+ * (Optional) helper to update icon after navigating back, if you ever need it.
+ * Not strictly required right now, but left in case you hook it up later.
+ */
+async function updateRecipeCardBookmarkIndicator(recipeId, isBookmarked) {
+  const key = buildBookmarkKey(currentFridgeId, recipeId);
+  const icon = document.querySelector(
+    `.recipe-bookmark-indicator[data-key="${key}"]`
+  );
+
+  if (!icon) return;
+
+  if (isBookmarked) {
+    icon.classList.add("bi-bookmark-fill", "bookmarked");
+  } else {
+    icon.classList.remove("bi-bookmark-fill", "bookmarked");
+  }
 }
 
 /**
@@ -184,6 +279,7 @@ async function initRecipesUI() {
  * Show dashboard:
  * - Ensures user is logged in
  * - Fills "Hello <name>" line
+ * - Loads user bookmarks
  * - Then shows public fridge recipes to everyone
  */
 function showDashboard() {
@@ -200,6 +296,10 @@ function showDashboard() {
       nameElement.textContent = `${name}!`;
     }
 
+    // Load bookmarks from users/{uid} first
+    await loadUserBookmarks(user);
+
+    // Then render hero + grid using those bookmarks
     await initRecipesUI();
   });
 }
