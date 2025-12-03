@@ -3,3 +3,12 @@
 node_modules/
 .vscode/
 .env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+*.local
+dist/
+build/
+*.local
