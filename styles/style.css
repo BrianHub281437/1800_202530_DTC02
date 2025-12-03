@@ -17,6 +17,125 @@ body {
   width: 100%;
 }
 
+/* Bottom nav INSIDE the footer */
+
+
+
+.bottom-nav {
+
+
+  display: flex;
+
+
+  justify-content: center;
+
+
+  align-items: center;
+
+
+  gap: 1.5rem;
+
+
+}
+
+
+
+
+
+/* Links that look like pill buttons */
+
+
+.bottom-nav-link {
+
+
+  color: #ffffff;
+
+
+  text-decoration: none;
+
+
+  font-weight: 500;
+
+
+  font-size: 0.9rem;
+
+
+  padding: 0.35rem 1.1rem;
+
+
+  border-radius: 999px;              /* pill shape */
+
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+
+  background: transparent;
+
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+
+
+  transition:
+
+
+    background 0.15s ease,
+
+
+    box-shadow 0.15s ease,
+
+
+    transform 0.1s ease;
+
+
+}
+
+
+
+
+
+/* Hover / focus */
+
+
+.bottom-nav-link:hover,
+
+
+.bottom-nav-link:focus-visible {
+
+
+  background: rgba(255, 255, 255, 0.18);
+
+
+  transform: translateY(-1px);
+
+
+  text-decoration: none;
+
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+
+
+}
+
+
+
+
+
+/* Click */
+
+
+.bottom-nav-link:active {
+
+
+  transform: translateY(0);
+
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+
+}
+
+
+
 
 .footer-container {
   max-width: 900px;
@@ -61,4 +180,37 @@ body {
   margin-top: 12px;        /* space before each step heading */
 }
 
+.recipe-bookmark-indicator {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 1.4rem;
+  padding: 4px 6px;
+  border-radius: 6px;
+  color: #555;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
 
+.recipe-bookmark-indicator.bookmarked {
+  color: #0d6efd; /* Bootstrap primary blue */
+  border-color: #0d6efd;
+  background: rgba(13, 110, 253, 0.15);
+}
+
+/* --- Bookmark page layout fix --- */
+#bookmarksContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+
+  max-width: 1000px;
+  margin: 0 auto;
+
+  justify-items: start;   /* ⬅️ makes cards align LEFT */
+}
+
+#bookmarksContainer .recipe-card {
+  width: 260px;           /* consistent card size */
+}

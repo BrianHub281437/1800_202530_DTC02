@@ -1,238 +1,299 @@
 // src/eachrecipe.js
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap";
-import { onAuthReady } from "./authentication.js";
 
+import { db, auth } from "./firebaseConfig.js";
 import {
-  getFirestore,
   doc,
   getDoc,
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
-const db = getFirestore();
+let currentUserId = null;
+let currentBookmarkKey = null;
 
-/**
- * Extract YouTube video ID from common URL formats.
- */
-function extractYouTubeId(url) {
-  if (!url) return null;
+// ---------- URL HELPERS ----------
+
+function getParams() {
+  const params = new URL(window.location.href).searchParams;
+
+  return {
+    fridgeId: params.get("fridgeId") || null,
+    recipeId: params.get("id") || params.get("docID") || null,
+  };
+}
+
+function buildBookmarkKey(fridgeId, recipeId) {
+  if (!recipeId) return null;
+  return fridgeId ? `fridge:${fridgeId}:${recipeId}` : `recipe:${recipeId}`;
+}
+
+// Convert different YouTube URL formats to an embed URL
+function toYouTubeEmbedUrl(url) {
+  if (!url) return "";
+
+  // If it's already an embed URL
+  if (url.includes("embed")) return url;
 
   try {
     const u = new URL(url);
-
-    // https://www.youtube.com/watch?v=VIDEOID
-    const vParam = u.searchParams.get("v");
-    if (vParam) return vParam;
-
-    // https://youtu.be/VIDEOID
-    if (u.hostname.includes("youtu.be")) {
-      return u.pathname.replace("/", "");
+    const idFromQuery = u.searchParams.get("v");
+    if (idFromQuery) {
+      return `https://www.youtube.com/embed/${idFromQuery}`;
     }
-
-    return null;
-  } catch {
-    return null;
+  } catch (e) {
+    console.warn("Could not parse YouTube URL:", url);
   }
+
+  // Last fallback: treat whole string as ID
+  return `https://www.youtube.com/embed/${url}`;
 }
 
-/**
- * Render recipe data into the DOM.
- * Matches your eachRecipe.html IDs:
- *  - #recipe-title
- *  - #recipe-image
- *  - #recipe-meta
- *  - #ingredients-list
- *  - #instructions
- *  - #youtube-container
- */
-function formatInstructions(text) {
-  if (!text) return "<p>No instructions available.</p>";
+// ---------- LOAD & DISPLAY RECIPE ----------
 
-  // Split into steps based on sentence endings OR line breaks
-  const steps = text
-    .split(/[\.\n]+/g)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
+async function loadRecipe() {
+  const { fridgeId, recipeId } = getParams();
 
-  // Convert each step into an <li>
-  return steps.map(step => `<li>${step}.</li>`).join("");
-}
-
-function renderRecipe(data) {
-  const titleEl = document.getElementById("recipe-title");
-  const imageEl = document.getElementById("recipe-image");
-  const metaEl = document.getElementById("recipe-meta");
-  const ingredientsList = document.getElementById("ingredients-list");
-  const instructionsEl = document.getElementById("instructions");
-  const youtubeContainer = document.getElementById("youtube-container");
-
-  // Title
-  if (titleEl) {
-    titleEl.textContent = data.name || "Untitled recipe";
-  }
-
-  // Image
-  if (imageEl) {
-    if (data.thumbnail) {
-      imageEl.src = data.thumbnail;
-      imageEl.alt = data.name || "Recipe image";
-      imageEl.style.display = "block";
-    } else {
-      imageEl.style.display = "none";
-    }
-  }
-
-  // Meta (category • area)
-  if (metaEl) {
-    const parts = [];
-    if (data.category) parts.push(data.category);
-    if (data.area) parts.push(data.area);
-    metaEl.textContent = parts.join(" • ") || "";
-  }
-
-  // Ingredients
-  if (ingredientsList) {
-    ingredientsList.innerHTML = "";
-
-    const ingredientsArray = Array.isArray(data.ingredients)
-      ? data.ingredients
-      : [];
-
-    if (!ingredientsArray.length) {
-      const li = document.createElement("li");
-      li.textContent = "No ingredients listed for this recipe.";
-      ingredientsList.appendChild(li);
-    } else {
-      ingredientsArray.forEach((ing) => {
-        const li = document.createElement("li");
-
-        // Support both new & old formats:
-        const name = (ing.name || ing.ingredient || "").trim();
-        const measure = (ing.measure || "").trim();
-
-        if (!name && !measure) return;
-
-        if (measure && name) {
-          li.textContent = `${measure} ${name}`;
-        } else {
-          li.textContent = name || measure;
-        }
-
-        ingredientsList.appendChild(li);
-      });
-    }
-  }
-
-  // Instructions
-if (instructionsEl) {
-  instructionsEl.innerHTML = "";
-
-  const raw = data.instructions || "";
-  if (!raw.trim()) {
-    const li = document.createElement("li");
-    li.textContent = "No instructions provided for this recipe.";
-    instructionsEl.appendChild(li);
-  } else {
-    // Split on line breaks (TheMealDB often uses these)
-    const lines = raw
-      .split(/\r?\n/)
-      .map((l) => l.trim())
-      .filter((l) => l.length > 0);
-
-    lines.forEach((line) => {
-      const li = document.createElement("li");
-      li.textContent = line;
-
-      // If the line starts with "step 1", "step 2", etc. → bold, no bullet
-      if (/^step\s*\d+/i.test(line)) {
-        li.classList.add("step-heading");
-      }
-
-      instructionsEl.appendChild(li);
-    });
-  }
-}
-
-  // YouTube video
-  if (youtubeContainer) {
-    youtubeContainer.innerHTML = "";
-
-    const videoId = extractYouTubeId(data.youtube);
-    if (videoId) {
-      const iframe = document.createElement("iframe");
-      iframe.width = "560";
-      iframe.height = "315";
-      iframe.src = `https://www.youtube.com/embed/${videoId}`;
-      iframe.title = "YouTube video player";
-      iframe.frameBorder = "0";
-      iframe.allow =
-        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-      iframe.allowFullscreen = true;
-
-      youtubeContainer.appendChild(iframe);
-    } else {
-      const p = document.createElement("p");
-      p.textContent = "No YouTube video available for this recipe.";
-      youtubeContainer.appendChild(p);
-    }
-  }
-}
-
-/**
- * Load recipe from:
- *   fridge/{fridgeId}/recipes/{recipeId}
- * using ?fridgeId=...&id=... in the URL.
- */
-async function loadRecipeFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const fridgeId = params.get("fridgeId");
-  const recipeId = params.get("id");
-
-  if (!fridgeId || !recipeId) {
-    console.error("Missing fridgeId or id in URL:", { fridgeId, recipeId });
+  if (!recipeId) {
+    console.error("No recipe id in URL");
     const titleEl = document.getElementById("recipe-title");
-    if (titleEl) {
-      titleEl.textContent = "Recipe not found.";
-    }
+    if (titleEl) titleEl.textContent = "Recipe not found (no ID).";
     return;
   }
 
+  // Where to load from
+  let recipeRef;
+  if (fridgeId) {
+    recipeRef = doc(db, "fridge", fridgeId, "recipes", recipeId);
+  } else {
+    // fallback global collection
+    recipeRef = doc(db, "recipes", recipeId);
+  }
+
   try {
-    const recipeRef = doc(db, "fridge", fridgeId, "recipes", recipeId);
     const snap = await getDoc(recipeRef);
 
     if (!snap.exists()) {
-      console.error("Recipe document does not exist:", fridgeId, recipeId);
       const titleEl = document.getElementById("recipe-title");
-      if (titleEl) {
-        titleEl.textContent = "Recipe not found.";
-      }
+      if (titleEl) titleEl.textContent = "Recipe not found in database.";
       return;
     }
 
     const data = snap.data();
-    renderRecipe(data);
+
+    const name = data.name || data.strMeal || "Untitled recipe";
+    const category = data.category || data.strCategory || "";
+    const area = data.area || data.strArea || "";
+    const instructions = data.instructions || data.strInstructions || "";
+    const ingredientsArray = data.ingredients || data.extendedIngredients || [];
+    const thumbnail = data.thumbnail || data.strMealThumb || "";
+    const youtube = data.youtube || data.strYoutube || "";
+
+    // Bookmark key for this recipe
+    currentBookmarkKey = buildBookmarkKey(fridgeId, recipeId);
+
+    // ---- Update DOM ----
+    const titleEl = document.getElementById("recipe-title");
+    const metaEl = document.getElementById("recipe-meta");
+    const imgEl = document.getElementById("recipe-image");
+    const ingList = document.getElementById("ingredients-list");
+    const instrEl = document.getElementById("instructions");
+    const youtubeContainer = document.getElementById("youtube-container");
+
+    if (titleEl) titleEl.textContent = name;
+
+    if (metaEl) {
+      const parts = [];
+      if (category) parts.push(category);
+      if (area) parts.push(area);
+      metaEl.textContent = parts.join(" • ");
+    }
+
+    if (imgEl) {
+      imgEl.src = thumbnail || "";
+      imgEl.alt = `${name} image`;
+    }
+
+    // ----- INGREDIENTS -----
+    if (ingList) {
+      ingList.innerHTML = "";
+      if (Array.isArray(ingredientsArray) && ingredientsArray.length) {
+        ingredientsArray.forEach((obj) => {
+          const li = document.createElement("li");
+          if (obj.ingredient || obj.name) {
+            li.textContent = `${obj.ingredient || obj.name} – ${
+              obj.measure || obj.amount || ""
+            }`;
+          } else {
+            li.textContent = String(obj);
+          }
+          ingList.appendChild(li);
+        });
+      } else {
+        const li = document.createElement("li");
+        li.textContent = "No ingredients listed for this recipe.";
+        ingList.appendChild(li);
+      }
+    }
+
+    // ----- INSTRUCTIONS with STEP FORMAT -----
+    if (instrEl) {
+      instrEl.innerHTML = "";
+
+      if (!instructions.trim()) {
+        instrEl.textContent = "No instructions provided for this recipe.";
+      } else {
+        // Try splitting by line breaks first
+        let rawSteps = instructions
+          .split(/\r?\n/)
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0);
+
+        // If everything was one big line, split by sentences
+        if (rawSteps.length === 1) {
+          rawSteps = instructions
+            .split(/(?<=[.!?])\s+(?=[A-Z0-9])/)
+            .map((s) => s.trim())
+            .filter((s) => s.length > 0);
+        }
+
+        if (!rawSteps.length) {
+          instrEl.textContent = instructions;
+        } else {
+          rawSteps.forEach((stepText, idx) => {
+            const p = document.createElement("p");
+
+            const strong = document.createElement("strong");
+            strong.textContent = `Step ${idx + 1}: `;
+            p.appendChild(strong);
+
+            // Remove leading "Step X:" if it already exists in text
+            const cleaned = stepText.replace(/^Step\s+\d+:\s*/i, "");
+
+            p.appendChild(document.createTextNode(cleaned));
+            instrEl.appendChild(p);
+          });
+        }
+      }
+    }
+
+    // ----- YOUTUBE -----
+    if (youtubeContainer) {
+      if (youtube) {
+        const embedUrl = toYouTubeEmbedUrl(youtube);
+        youtubeContainer.innerHTML = `
+          <iframe
+            width="100%"
+            height="400"
+            src="${embedUrl}"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        `;
+      } else {
+        youtubeContainer.innerHTML = "";
+      }
+    }
+
+    // After recipe is loaded, update bookmark button (if user known)
+    await updateBookmarkButtonState();
   } catch (err) {
     console.error("Error loading recipe:", err);
     const titleEl = document.getElementById("recipe-title");
-    if (titleEl) {
-      titleEl.textContent = "Error loading recipe.";
-    }
+    if (titleEl) titleEl.textContent = "Error loading recipe.";
   }
 }
 
-/**
- * Ensure user is logged in, then load the recipe.
- */
-function initEachRecipePage() {
-  onAuthReady(async (user) => {
-    if (!user) {
-      location.href = "index.html";
-      return;
-    }
+// ---------- AUTH & BOOKMARK BUTTON ----------
 
-    await loadRecipeFromUrl();
-  });
+async function updateBookmarkButtonState() {
+  const btn = document.getElementById("bookmarkBtn");
+  if (!btn) return;
+
+  // default
+  btn.disabled = false;
+  btn.textContent = "Add to bookmarks";
+
+  if (!currentUserId) {
+    btn.textContent = "Log in to bookmark";
+    btn.disabled = true;
+    return;
+  }
+
+  if (!currentBookmarkKey) {
+    return;
+  }
+
+  try {
+    const userRef = doc(db, "users", currentUserId);
+    const snap = await getDoc(userRef);
+
+    const data = snap.exists() ? snap.data() : {};
+    const bookmarks = data.bookmarks || [];
+    const isBookmarked = bookmarks.includes(currentBookmarkKey);
+
+    btn.dataset.bookmarked = isBookmarked ? "true" : "false";
+    btn.textContent = isBookmarked ? "Remove bookmark" : "Add to bookmarks";
+  } catch (err) {
+    console.error("Error reading bookmarks:", err);
+  }
 }
 
-document.addEventListener("DOMContentLoaded", initEachRecipePage);
+async function toggleBookmark() {
+  const btn = document.getElementById("bookmarkBtn");
+  if (!btn) return;
+
+  if (!currentUserId) {
+    alert("Please log in to bookmark recipes.");
+    return;
+  }
+
+  if (!currentBookmarkKey) {
+    console.warn("No bookmark key for this recipe.");
+    return;
+  }
+
+  try {
+    const userRef = doc(db, "users", currentUserId);
+    const snap = await getDoc(userRef);
+
+    const data = snap.exists() ? snap.data() : {};
+    const bookmarks = data.bookmarks || [];
+    const already = bookmarks.includes(currentBookmarkKey);
+
+    if (!snap.exists()) {
+      await setDoc(userRef, { bookmarks: [] }, { merge: true });
+    }
+
+    await updateDoc(userRef, {
+      bookmarks: already
+        ? arrayRemove(currentBookmarkKey)
+        : arrayUnion(currentBookmarkKey),
+    });
+
+    await updateBookmarkButtonState();
+  } catch (err) {
+    console.error("Error updating bookmarks:", err);
+    btn.textContent = "Error – try again";
+  }
+}
+
+// ---------- AUTH & INIT ----------
+
+onAuthStateChanged(auth, (user) => {
+  currentUserId = user ? user.uid : null;
+  updateBookmarkButtonState();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("bookmarkBtn");
+  if (btn) {
+    btn.addEventListener("click", toggleBookmark);
+  }
+
+  loadRecipe();
+});
