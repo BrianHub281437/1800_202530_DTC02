@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 import { onAuthReady } from "./authentication.js";
 
-// Firestore imports – using default app initialized in authentication.js
 import {
   getFirestore,
   collection,
@@ -11,37 +10,31 @@ import {
   query,
   orderBy,
   limit,
-  doc,
-  getDoc,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const db = getFirestore();
 
-// Globals so hero + cards can use them
+//  REPLACE THIS with your actual fridge doc ID from Firestore
+const PUBLIC_FRIDGE_ID = "XXXX"; // e.g. "AThzw3kBcRC5g8WT5xbf" or similar
+
 let featuredRecipes = [];
 let heroIndex = 0;
-let currentFridgeId = null;
+let currentFridgeId = PUBLIC_FRIDGE_ID;
 
 /**
  * Update the hero section based on a single recipe object.
- * Expects:
- *  - #hero-backdrop
- *  - #hero-recipe-text
- *  - #hero-controls
  */
 function updateHero(recipe) {
   const heroBackdrop = document.getElementById("hero-backdrop");
   const heroRecipeText = document.getElementById("hero-recipe-text");
   const heroControls = document.getElementById("hero-controls");
 
-  if (!heroBackdrop || !heroRecipeText || !heroControls) {
-    return;
-  }
+  if (!heroBackdrop || !heroRecipeText || !heroControls) return;
 
   if (!recipe) {
     heroBackdrop.style.backgroundImage = "";
     heroRecipeText.textContent =
-      "No recipes found in your fridges yet. Add some recipes to a fridge.";
+      "No recipes found in the public fridge yet.";
     heroControls.style.display = "none";
     return;
   }
@@ -63,7 +56,6 @@ function updateHero(recipe) {
 
 /**
  * Build a recipe card for the grid.
- * Expects a container with id="recipes-grid" in HTML.
  */
 function createRecipeCard(recipe) {
   const card = document.createElement("article");
@@ -91,9 +83,9 @@ function createRecipeCard(recipe) {
   meta.textContent = metaParts.join(" • ");
   body.appendChild(meta);
 
-  // View recipe button – include BOTH fridgeId and recipe id in URL
+  // View recipe button – everyone uses the same PUBLIC_FRIDGE_ID
   const btn = document.createElement("a");
-  btn.href = `/eachRecipe.html?fridgeId=${currentFridgeId}&id=${recipe.id}`;
+  btn.href = `/eachRecipe.html?fridgeId=${PUBLIC_FRIDGE_ID}&id=${recipe.id}`;
   btn.className = "btn btn-primary btn-sm";
   btn.textContent = "View recipe";
   body.appendChild(btn);
@@ -114,7 +106,7 @@ function renderRecipesGrid(recipes) {
   if (!recipes.length) {
     const msg = document.createElement("p");
     msg.textContent =
-      "No recipes found in any of your fridges yet. Add recipes to a fridge to see them here.";
+      "No recipes found in the public fridge yet.";
     recipesGrid.appendChild(msg);
     return;
   }
@@ -126,17 +118,12 @@ function renderRecipesGrid(recipes) {
 }
 
 /**
- * Load recipes from a specific fridge's "recipes" subcollection:
- *   fridge/{fridgeId}/recipes
+ * Load recipes from the PUBLIC fridge's "recipes" subcollection.
+ *   fridge/{PUBLIC_FRIDGE_ID}/recipes
  */
-async function loadRecipesFromFridge(fridgeId) {
-  if (!fridgeId) {
-    console.warn("No fridgeId provided to loadRecipesFromFridge");
-    return [];
-  }
-
+async function loadPublicFridgeRecipes() {
   try {
-    const recipesCol = collection(db, "fridge", fridgeId, "recipes");
+    const recipesCol = collection(db, "fridge", PUBLIC_FRIDGE_ID, "recipes");
     const q = query(recipesCol, orderBy("createdAt", "desc"), limit(20));
     const snapshot = await getDocs(q);
 
@@ -155,88 +142,23 @@ async function loadRecipesFromFridge(fridgeId) {
       };
     });
   } catch (err) {
-    console.error("Error loading recipes from fridge:", err);
+    console.error("Error loading recipes from public fridge:", err);
     return [];
   }
 }
 
 /**
- * Find a fridge for this user that actually has recipes.
- * Looks through all fridge IDs in user.fridges and returns
- * the first one that has at least 1 recipe in fridge/{id}/recipes.
+ * Initialize hero + grid using recipes from PUBLIC_FRIDGE_ID.
  */
-async function findFridgeWithRecipesForUser(user) {
-  if (!user) return null;
+async function initRecipesUI() {
+  const recipes = await loadPublicFridgeRecipes();
 
-  try {
-    const userRef = doc(db, "users", user.uid);
-    const snap = await getDoc(userRef);
-
-    if (!snap.exists()) {
-      console.warn("User document not found for:", user.uid);
-      return null;
-    }
-
-    const data = snap.data();
-    const fridges = data.fridges || [];
-
-    if (!fridges.length) {
-      console.warn("User has no fridges array.");
-      return null;
-    }
-
-    // Try each fridge in order until we find one that has recipes
-    for (const fridgeId of fridges) {
-      const recipesCol = collection(db, "fridge", fridgeId, "recipes");
-      const snapshot = await getDocs(query(recipesCol, limit(1)));
-
-      if (!snapshot.empty) {
-        console.log("Using fridge with recipes:", fridgeId);
-        return fridgeId;
-      }
-    }
-
-    // If we got here, none of the fridges had recipes
-    console.warn("No fridges with recipes found for user.");
-    return null;
-  } catch (err) {
-    console.error("Error finding fridge with recipes:", err);
-    return null;
-  }
-}
-
-/**
- * Initialize hero + grid using recipes from the first fridge
- * (in user.fridges) that actually has recipes.
- */
-async function initRecipesUIForUser(user) {
-  const statusEl = document.getElementById("hero-recipe-text");
-
-  const fridgeId = await findFridgeWithRecipesForUser(user);
-
-  if (!fridgeId) {
-    console.warn("No fridge with recipes found for this user.");
-    if (statusEl) {
-      statusEl.textContent =
-        "No recipes found in any of your fridges yet. Add recipes to a fridge to see them here.";
-    }
-    renderRecipesGrid([]);
-    return;
-  }
-
-  currentFridgeId = fridgeId;
-
-  const recipes = await loadRecipesFromFridge(fridgeId);
-
-  // Use first few as "featured" for hero
   featuredRecipes = recipes.slice(0, 5);
   heroIndex = 0;
   updateHero(featuredRecipes[0]);
 
-  // Populate grid with all recipes from this fridge
   renderRecipesGrid(recipes);
 
-  // Hero prev/next
   const prevBtn = document.getElementById("prevHero");
   const nextBtn = document.getElementById("nextHero");
 
@@ -262,7 +184,7 @@ async function initRecipesUIForUser(user) {
  * Show dashboard:
  * - Ensures user is logged in
  * - Fills "Hello <name>" line
- * - Then initializes the recipes UI from a fridge that has recipes
+ * - Then shows public fridge recipes to everyone
  */
 function showDashboard() {
   const nameElement = document.getElementById("name-goes-here");
@@ -278,11 +200,10 @@ function showDashboard() {
       nameElement.textContent = `${name}!`;
     }
 
-    await initRecipesUIForUser(user);
+    await initRecipesUI();
   });
 }
 
-// On DOM ready, show dashboard (auth + recipes)
 document.addEventListener("DOMContentLoaded", () => {
   showDashboard();
 });
