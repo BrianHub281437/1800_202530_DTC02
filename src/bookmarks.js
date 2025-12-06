@@ -59,9 +59,9 @@ function createRecipeCard(recipe) {
   btn.textContent = "View recipe";
 
   if (recipe.fridgeId) {
-    btn.href = `/eachRecipe.html?fridgeId=${recipe.fridgeId}&id=${recipe.id}`;
+    btn.href = `/eachrecipe.html?fridgeId=${recipe.fridgeId}&id=${recipe.id}`;
   } else {
-    btn.href = `/eachRecipe.html?id=${recipe.id}`;
+    btn.href = `/eachrecipe.html?id=${recipe.id}`;
   }
 
   body.appendChild(btn);
