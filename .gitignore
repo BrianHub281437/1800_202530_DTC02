@@ -12,3 +12,16 @@ build/
 dist/
 build/
 *.local
+.firebaserc
+firebase.json
+.cache/
+.idea/
+*.iml
+.next/
+out/
+coverage/
+*.tgz
+firestore.rules
+firestore.indexes.json
+vite.config.js
+.firebase/hosting.ZGlzdA.cache

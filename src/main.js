@@ -161,7 +161,7 @@ function createRecipeCard(recipe) {
 
   // ----- VIEW RECIPE BUTTON -----
   const btn = document.createElement("a");
-  btn.href = `/eachRecipe.html?fridgeId=${currentFridgeId}&id=${recipe.id}`;
+  btn.href = `/eachrecipe.html?fridgeId=${currentFridgeId}&id=${recipe.id}`;
   btn.className = "btn btn-primary btn-sm mt-2";
   btn.textContent = "View recipe";
   body.appendChild(btn);
